@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+message: "If you use this code or its results, please cite the paper."
+title: "SGRD — reproduction and verification code"
+abstract: >-
+  Reproduces every quantitative and formal claim in "Safety-Gated Reversible
+  Denial: Recoverable Anti-Tampering for Crewless Merchant Ships": the
+  exhaustive property check over five controller designs, the absorbing
+  continuous-time Markov chain, the threshold analysis over heterogeneous
+  holders, and the possession-duration derivation from the public NGA
+  Anti-Shipping Activity Messages database.
+type: software
+authors:
+  - family-names: Jang
+    given-names: Woohyun
+    affiliation: "Department of Information Security, Gachon University / LIG Defense & Aerospace"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO
+  - family-names: Yun
+    given-names: Sangbom
+    affiliation: "LIG Defense & Aerospace"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO
+  - family-names: Kim
+    given-names: Taekyu
+    affiliation: "Department of Information Security, Gachon University"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO
+repository-code: "https://github.com/jwh84/sgrd-repro"
+url: "https://github.com/jwh84/sgrd-repro"
+# version: "1.0.0"                                      # TODO 태그 부여 시
+# date-released: "2026-00-00"                           # TODO
+license: MIT
+keywords:
+  - anti-tampering
+  - reversible denial
+  - maritime autonomous surface ships
+  - threshold cryptography
+  - model checking
+  - continuous-time Markov chain
+preferred-citation:
+  type: article
+  title: "무승무원 상선을 위한 복구 가능한 안티탬퍼: 안전상태 게이트형 가역적 무력화"
+  authors:
+    - family-names: Jang
+      given-names: Woohyun
+    - family-names: Yun
+      given-names: Sangbom
+    - family-names: Kim
+      given-names: Taekyu
+  journal: "융합보안논문지 (Convergence Security Journal)"
+  # volume: 00                                          # TODO
+  # issue: 0                                            # TODO
+  # start: 0                                            # TODO
+  # end: 0                                              # TODO
+  # year: 2026                                          # TODO
+  # doi: "10.33778/xxxx"                                # TODO

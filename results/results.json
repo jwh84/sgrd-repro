@@ -1,0 +1,1195 @@
+{
+  "asam": {
+    "published": {
+      "Pooled": {
+        "n": 16,
+        "median_h": 120.0,
+        "mean_h": 175.5,
+        "p90_h": 444.0,
+        "max_h": 648.0
+      },
+      "NAVAREA II (Gulf of Guinea)": {
+        "n": 10,
+        "median_h": 84.0,
+        "mean_h": 86.4,
+        "p90_h": 146.4,
+        "max_h": 168.0
+      },
+      "Other NAVAREAs (VIII, IX, XI)": {
+        "n": 6,
+        "median_h": 228.0,
+        "mean_h": 324.0,
+        "p90_h": 624.0,
+        "max_h": 648.0
+      }
+    },
+    "consistency_problems": []
+  },
+  "modelcheck": {
+    "B0": {
+      "states": 722,
+      "transitions": 3116,
+      "satisfied": 1,
+      "witnesses": {
+        "P1": 96,
+        "P2": 176,
+        "P3": 128,
+        "P4": 136,
+        "P5": 272,
+        "P6": 272,
+        "P7": 76,
+        "P8": 136,
+        "P9": 0,
+        "P10": 96,
+        "P11": 1356,
+        "P12": 416
+      }
+    },
+    "B1": {
+      "states": 514,
+      "transitions": 2280,
+      "satisfied": 11,
+      "witnesses": {
+        "P1": 0,
+        "P2": 0,
+        "P3": 0,
+        "P4": 0,
+        "P5": 0,
+        "P6": 0,
+        "P7": 0,
+        "P8": 0,
+        "P9": 0,
+        "P10": 4,
+        "P11": 0,
+        "P12": 0
+      }
+    },
+    "B2": {
+      "states": 234,
+      "transitions": 916,
+      "satisfied": 9,
+      "witnesses": {
+        "P1": 0,
+        "P2": 0,
+        "P3": 0,
+        "P4": 0,
+        "P5": 16,
+        "P6": 16,
+        "P7": 0,
+        "P8": 8,
+        "P9": 0,
+        "P10": 0,
+        "P11": 0,
+        "P12": 0
+      }
+    },
+    "B3": {
+      "states": 266,
+      "transitions": 1104,
+      "satisfied": 11,
+      "witnesses": {
+        "P1": 0,
+        "P2": 0,
+        "P3": 0,
+        "P4": 4,
+        "P5": 0,
+        "P6": 0,
+        "P7": 0,
+        "P8": 0,
+        "P9": 0,
+        "P10": 0,
+        "P11": 0,
+        "P12": 0
+      }
+    },
+    "H1": {
+      "states": 346,
+      "transitions": 1430,
+      "satisfied": 12,
+      "witnesses": {
+        "P1": 0,
+        "P2": 0,
+        "P3": 0,
+        "P4": 0,
+        "P5": 0,
+        "P6": 0,
+        "P7": 0,
+        "P8": 0,
+        "P9": 0,
+        "P10": 0,
+        "P11": 0,
+        "P12": 0
+      }
+    },
+    "ablation": {
+      "erase_keys_on_denial": [
+        "P7"
+      ],
+      "onboard_recovery_secret": [],
+      "monotonic_counter": [
+        "P9"
+      ],
+      "staged": [
+        "P5",
+        "P6",
+        "P8"
+      ],
+      "gate_custody": [
+        "P3",
+        "P12"
+      ],
+      "gate_safe": [
+        "P4"
+      ],
+      "gate_attested": [],
+      "gate_unused": [],
+      "require_threshold": [
+        "P10"
+      ],
+      "nav_kernel_outside_denial": [
+        "P11"
+      ]
+    }
+  },
+  "extraction": {
+    "Pooled": {
+      "mean_possession_h": 175.5,
+      "B0/A2": 0.7090909090909091,
+      "B0/A3": 0.8796992481203006
+    },
+    "NAVAREA II (Gulf of Guinea)": {
+      "mean_possession_h": 86.4,
+      "B0/A2": 0.5454545454545454,
+      "B0/A3": 0.7826086956521738
+    },
+    "Other NAVAREAs (VIII, IX, XI)": {
+      "mean_possession_h": 324.0,
+      "B0/A2": 0.8181818181818182,
+      "B0/A3": 0.9310344827586207
+    }
+  },
+  "ctmc": {
+    "local secret (no quorum) [B0]": {
+      "P(ext)": 0.7090909090909091,
+      "P(rest|c)": 0.9986130360610264,
+      "P(loss|c)": 0.0013869639389736458,
+      "E[T_c] (h)": 0.9986140374479875,
+      "P_u": 1.0,
+      "P(rest) uncond": 0.2905056104904804,
+      "P(loss) uncond": 0.0004034804186105152
+    },
+    "1-of-1 (ROC only) [H1]": {
+      "P(ext)": null,
+      "P(rest|c)": 0.9574958280001944,
+      "P(loss|c)": 0.042504171999805586,
+      "E[T_c] (h)": 23.680436016713273,
+      "P_u": 0.05,
+      "P(rest) uncond": null,
+      "P(loss) uncond": null
+    },
+    "2-of-3 (ROC, class, owner) [H1]": {
+      "P(ext)": null,
+      "P(rest|c)": 0.8458016735780708,
+      "P(loss|c)": 0.15419832642192935,
+      "E[T_c] (h)": 24.404999843365825,
+      "P_u": 0.00304,
+      "P(rest) uncond": null,
+      "P(loss) uncond": null
+    },
+    "2-of-4 (+ 24/7 escrow) [H1]": {
+      "P(ext)": null,
+      "P(rest|c)": 0.9645890195318086,
+      "P(loss|c)": 0.03541098046819144,
+      "E[T_c] (h)": 22.96035166091536,
+      "P_u": 0.0039789000000000005,
+      "P(rest) uncond": null,
+      "P(loss) uncond": null
+    },
+    "3-of-4 (+ 24/7 escrow) [H1]": {
+      "P(ext)": null,
+      "P(rest|c)": 0.8355500221437633,
+      "P(loss|c)": 0.1644499778562366,
+      "E[T_c] (h)": 25.57628822643507,
+      "P_u": 6.0100000000000004e-05,
+      "P(rest) uncond": null,
+      "P(loss) uncond": null
+    },
+    "3-of-5 (+ flag) [H1]": {
+      "P(ext)": null,
+      "P(rest|c)": 0.8994278518858665,
+      "P(loss|c)": 0.10057214811413354,
+      "E[T_c] (h)": 24.68704605674731,
+      "P_u": 9.9288e-05,
+      "P(rest) uncond": null,
+      "P(loss) uncond": null
+    },
+    "sweep_five_holders": {
+      "1": {
+        "P_available": 0.999988,
+        "P_u": 0.114901093,
+        "P_loss_given_custody": 0.028994657568650578,
+        "E_Tc": 20.830545949038743
+      },
+      "2": {
+        "P_available": 0.998154,
+        "P_u": 0.004998718,
+        "P_loss_given_custody": 0.03296850292270426,
+        "E_Tc": 22.457090068684206
+      },
+      "3": {
+        "P_available": 0.9312699999999999,
+        "P_u": 9.9288e-05,
+        "P_loss_given_custody": 0.10057214811413354,
+        "E_Tc": 24.68704605674731
+      },
+      "4": {
+        "P_available": 0.6368459999999999,
+        "P_u": 8.980000000000001e-07,
+        "P_loss_given_custody": 0.3868660272283473,
+        "E_Tc": 26.93865116903504
+      },
+      "5": {
+        "P_available": 0.20374199999999998,
+        "P_u": 3.0000000000000004e-09,
+        "P_loss_given_custody": 0.8043346726131024,
+        "E_Tc": 28.72146204372786
+      }
+    },
+    "finding3_identity": {
+      "p_ext": 0.7090909090909091,
+      "p_survives": 0.2909090909090909,
+      "p_loss_given_custody": 0.0013869639389736458,
+      "p_loss_uncond": 0.0004034804186105152
+    }
+  },
+  "reproduction": {
+    "summary": "132/132 published values reproduced",
+    "checks": [
+      {
+        "section": "Table 3",
+        "quantity": "ASAM Pooled mean (h)",
+        "published": 175.5,
+        "computed": 175.5,
+        "tolerance": 0.5
+      },
+      {
+        "section": "Table 3",
+        "quantity": "ASAM Pooled n",
+        "published": 16,
+        "computed": 16,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 3",
+        "quantity": "ASAM NAVAREA II (Gulf of Guinea) mean (h)",
+        "published": 86.4,
+        "computed": 86.4,
+        "tolerance": 0.5
+      },
+      {
+        "section": "Table 3",
+        "quantity": "ASAM NAVAREA II (Gulf of Guinea) n",
+        "published": 10,
+        "computed": 10,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 3",
+        "quantity": "ASAM Other NAVAREAs (VIII, IX, XI) mean (h)",
+        "published": 324.0,
+        "computed": 324.0,
+        "tolerance": 0.5
+      },
+      {
+        "section": "Table 3",
+        "quantity": "ASAM Other NAVAREAs (VIII, IX, XI) n",
+        "published": 6,
+        "computed": 6,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u local secret (no quorum) [B0]",
+        "published": 1.0,
+        "computed": 1.0,
+        "tolerance": 0.050001000000000004
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u 1-of-1 (ROC only) [H1]",
+        "published": 0.05,
+        "computed": 0.05,
+        "tolerance": 0.0025010000000000006
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u 2-of-3 (ROC, class, owner) [H1]",
+        "published": 0.003,
+        "computed": 0.00304,
+        "tolerance": 0.000151
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u 2-of-4 (+ 24/7 escrow) [H1]",
+        "published": 0.004,
+        "computed": 0.0039789000000000005,
+        "tolerance": 0.000201
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u 3-of-4 (+ 24/7 escrow) [H1]",
+        "published": 6e-05,
+        "computed": 6.0100000000000004e-05,
+        "tolerance": 4e-06
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P_u 3-of-5 (+ flag) [H1]",
+        "published": 9.9e-05,
+        "computed": 9.9288e-05,
+        "tolerance": 5.95e-06
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "P_u at t=1 over five holders",
+        "published": 0.115,
+        "computed": 0.114901093,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "P(authority assemblable) at t=4",
+        "published": 0.637,
+        "computed": 0.6368459999999999,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "P(authority assemblable) at t=5",
+        "published": 0.204,
+        "computed": 0.20374199999999998,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Sec. VII-B",
+        "quantity": "P(ext) B0 under A2, pooled",
+        "published": 0.709,
+        "computed": 0.7090909090909091,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Sec. VII-B",
+        "quantity": "P(ext) B0 under A3, pooled",
+        "published": 0.88,
+        "computed": 0.8796992481203006,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Fig. 3",
+        "quantity": "P(ext) B0/A2 at 86 h possession",
+        "published": 0.545,
+        "computed": 0.5454545454545454,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Fig. 3",
+        "quantity": "P(ext) B0/A2 at 324 h possession",
+        "published": 0.818,
+        "computed": 0.8181818181818182,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(ext) local secret (no quorum) [B0]",
+        "published": 0.709,
+        "computed": 0.7090909090909091,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) local secret (no quorum) [B0]",
+        "published": 0.999,
+        "computed": 0.9986130360610264,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) local secret (no quorum) [B0]",
+        "published": 0.001,
+        "computed": 0.0013869639389736458,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] local secret (no quorum) [B0]",
+        "published": 1.0,
+        "computed": 0.9986140374479875,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) 1-of-1 (ROC only) [H1]",
+        "published": 0.958,
+        "computed": 0.9574958280001944,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) 1-of-1 (ROC only) [H1]",
+        "published": 0.043,
+        "computed": 0.042504171999805586,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] 1-of-1 (ROC only) [H1]",
+        "published": 23.7,
+        "computed": 23.680436016713273,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) 2-of-3 (ROC, class, owner) [H1]",
+        "published": 0.846,
+        "computed": 0.8458016735780708,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) 2-of-3 (ROC, class, owner) [H1]",
+        "published": 0.154,
+        "computed": 0.15419832642192935,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] 2-of-3 (ROC, class, owner) [H1]",
+        "published": 24.4,
+        "computed": 24.404999843365825,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) 2-of-4 (+ 24/7 escrow) [H1]",
+        "published": 0.965,
+        "computed": 0.9645890195318086,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) 2-of-4 (+ 24/7 escrow) [H1]",
+        "published": 0.035,
+        "computed": 0.03541098046819144,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] 2-of-4 (+ 24/7 escrow) [H1]",
+        "published": 23.0,
+        "computed": 22.96035166091536,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) 3-of-4 (+ 24/7 escrow) [H1]",
+        "published": 0.836,
+        "computed": 0.8355500221437633,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) 3-of-4 (+ 24/7 escrow) [H1]",
+        "published": 0.164,
+        "computed": 0.1644499778562366,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] 3-of-4 (+ 24/7 escrow) [H1]",
+        "published": 25.6,
+        "computed": 25.57628822643507,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(rest|c) 3-of-5 (+ flag) [H1]",
+        "published": 0.899,
+        "computed": 0.8994278518858665,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "P(loss|c) 3-of-5 (+ flag) [H1]",
+        "published": 0.101,
+        "computed": 0.10057214811413354,
+        "tolerance": 0.001
+      },
+      {
+        "section": "Table 7",
+        "quantity": "E[T_c] 3-of-5 (+ flag) [H1]",
+        "published": 24.7,
+        "computed": 24.68704605674731,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Finding 3",
+        "quantity": "unconditional P(loss), B0",
+        "published": 0.0,
+        "computed": 0.0004034804186105152,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "P(loss|c) at t=4 over five holders",
+        "published": 0.387,
+        "computed": 0.3868660272283473,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "P(loss|c) at t=5 over five holders",
+        "published": 0.804,
+        "computed": 0.8043346726131024,
+        "tolerance": 0.0005
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: properties satisfied (of 12)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P1 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P2 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P3 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P4 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P5 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P6 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P7 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P8 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P10 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P11 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B0: P12 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: properties satisfied (of 12)",
+        "published": 11,
+        "computed": 11,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P2 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P3 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P4 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P5 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P6 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P8 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P10 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B1: P12 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: properties satisfied (of 12)",
+        "published": 9,
+        "computed": 9,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P2 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P3 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P4 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P5 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P6 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P8 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P10 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B2: P12 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: properties satisfied (of 12)",
+        "published": 11,
+        "computed": 11,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P2 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P3 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P4 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P5 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P6 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P8 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P10 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "B3: P12 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: properties satisfied (of 12)",
+        "published": 12,
+        "computed": 12,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P2 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P3 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P4 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P5 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P6 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P8 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P10 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "H1: P12 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: erase_keys_on_denial breaks 1 propert(y/ies)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: erase_keys_on_denial breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: onboard_recovery_secret breaks 0 propert(y/ies)",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: onboard_recovery_secret breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: monotonic_counter breaks 1 propert(y/ies)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: monotonic_counter breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: staged breaks 3 propert(y/ies)",
+        "published": 3,
+        "computed": 3,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: staged breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_custody breaks 2 propert(y/ies)",
+        "published": 2,
+        "computed": 2,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_custody breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_safe breaks 1 propert(y/ies)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_safe breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_attested breaks 0 propert(y/ies)",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_attested breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_unused breaks 0 propert(y/ies)",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: gate_unused breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: require_threshold breaks 1 propert(y/ies)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: require_threshold breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: nav_kernel_outside_denial breaks 1 propert(y/ies)",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "ablation: nav_kernel_outside_denial breaks exactly the published set",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "C_u/C_hull indifference, 2-of-4 vs 3-of-5 (+ flag)",
+        "published": 16.8,
+        "computed": 16.7957949521607,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "C_u/C_hull indifference, 2-of-4 vs 3-of-4 (+ 24/7 escrow)",
+        "published": 32.9,
+        "computed": 32.928191637247416,
+        "tolerance": 0.05
+      },
+      {
+        "section": "Finding 1",
+        "quantity": "t=2: n=4 dominates n=3 post-custody",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Finding 1",
+        "quantity": "t=3: n=5 dominates n=4 post-custody",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "viable band lower bound",
+        "published": 2,
+        "computed": 2,
+        "tolerance": 0
+      },
+      {
+        "section": "Finding 2",
+        "quantity": "viable band upper bound",
+        "published": 3,
+        "computed": 3,
+        "tolerance": 0
+      }
+    ],
+    "notes": []
+  }
+}

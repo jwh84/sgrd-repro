@@ -1,0 +1,34 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Woohyun Jang, Sangbom Yun, Taekyu Kim
+
+The contents of this directory — `results.json`, `counterexamples.json`,
+`counterexamples.txt`, `asam-audit.csv`, and everything under `figures/` — are
+licensed under the Creative Commons Attribution 4.0 International License.
+
+You are free to share and adapt this material for any purpose, including
+commercially, provided you give appropriate credit, link to the license, and
+indicate if changes were made.
+
+Full licence text: https://creativecommons.org/licenses/by/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by/4.0/
+
+ATTRIBUTION
+
+    W. Jang, S. Yun, and T. Kim, "Safety-Gated Reversible Denial: Recoverable
+    Anti-Tampering for Crewless Merchant Ships," 2026.
+    https://github.com/jwh84/sgrd-repro
+
+See CITATION.cff in the repository root for a machine-readable citation.
+
+WHAT THIS DOES NOT COVER
+
+`asam-audit.csv` is a *derived* audit trail: reference numbers, dates,
+durations, the reading rule applied to each, stratum, and inclusion. The
+underlying Anti-Shipping Activity Messages records — including the incident
+narratives — are published by the US National Geospatial-Intelligence Agency
+at https://msi.nga.mil/Piracy and are not redistributed here. Obtain them from
+the source; this licence grants no rights over them.
+
+The software in this repository is licensed separately under the MIT License.
+See ../LICENSE.

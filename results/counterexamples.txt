@@ -1,0 +1,60 @@
+SGRD -- counterexamples per design
+
+== B0: 1/12 satisfied (722 states, 3116 transitions)
+   P1 (96 violating): No restoration from a secret held on the platform
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'on-board', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P2 (176 violating): No token replay: a consumed authorisation cannot restore again
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'denied': (True, False), 'command_owner': ('autonomous', 'roc')}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': True, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': True}
+   P3 (128 violating): No restoration while the adversary holds physical possession
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P4 (136 violating): No restoration outside the navigational safe-state envelope
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': False, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P5 (272 violating): Ordered staging R0-R3 is never bypassed
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P6 (272 violating): Capability is restored only after post-possession attestation
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P7 (76 violating): Denial is durable: no extraction during an active denial episode
+      action=extract  changed={'extracted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'none', 'fresh': False, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P8 (136 violating): A tampered configuration is never restored to capability
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': True, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P10 (96 violating): Coerced holders below the threshold cannot restore
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P11 (1356 violating): Navigation capability survives every denial state
+      action=deny  changed={'phase': ('NORMAL', 'DENIED'), 'denied': (False, True), 'nav_available': (True, False)}
+      from={'phase': 'NORMAL', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'none', 'fresh': False, 'safe': True, 'used': False, 'denied': False, 'nav_available': True, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P12 (416 violating): Command authority is never held while the adversary holds the platform
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': True, 'tampered': False, 'attested': False, 'keys': True, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': False, 'command_owner': 'autonomous', 'sensor_trusted': False}
+
+== B1: 11/12 satisfied (514 states, 2280 transitions)
+   P10 (4 violating): Coerced holders below the threshold cannot restore
+      action=R3_restore  changed={'phase': ('R3', 'RESTORED'), 'keys': (False, True), 'auth': ('coerced', 'none'), 'fresh': (True, False), 'used': (False, True), 'denied': (True, False)}
+      from={'phase': 'R3', 'possessed': False, 'tampered': False, 'attested': True, 'keys': False, 'extracted': False, 'auth': 'coerced', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': True, 'command_owner': 'roc', 'sensor_trusted': True}
+
+== B2: 9/12 satisfied (234 states, 916 transitions)
+   P5 (16 violating): Ordered staging R0-R3 is never bypassed
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'keys': (False, True), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': False, 'tampered': False, 'attested': False, 'keys': False, 'extracted': False, 'auth': 'legitimate', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': True, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P6 (16 violating): Capability is restored only after post-possession attestation
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'keys': (False, True), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': False, 'tampered': False, 'attested': False, 'keys': False, 'extracted': False, 'auth': 'legitimate', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': True, 'command_owner': 'autonomous', 'sensor_trusted': False}
+   P8 (8 violating): A tampered configuration is never restored to capability
+      action=restore  changed={'phase': ('DENIED', 'RESTORED'), 'keys': (False, True), 'used': (False, True), 'denied': (True, False), 'command_owner': ('autonomous', 'roc'), 'sensor_trusted': (False, True)}
+      from={'phase': 'DENIED', 'possessed': False, 'tampered': True, 'attested': False, 'keys': False, 'extracted': False, 'auth': 'legitimate', 'fresh': True, 'safe': True, 'used': False, 'denied': True, 'nav_available': True, 'command_owner': 'autonomous', 'sensor_trusted': False}
+
+== B3: 11/12 satisfied (266 states, 1104 transitions)
+   P4 (4 violating): No restoration outside the navigational safe-state envelope
+      action=R3_restore  changed={'phase': ('R3', 'RESTORED'), 'keys': (False, True), 'auth': ('legitimate', 'none'), 'fresh': (True, False), 'used': (False, True), 'denied': (True, False)}
+      from={'phase': 'R3', 'possessed': False, 'tampered': False, 'attested': True, 'keys': False, 'extracted': False, 'auth': 'legitimate', 'fresh': True, 'safe': False, 'used': False, 'denied': True, 'nav_available': True, 'command_owner': 'roc', 'sensor_trusted': True}
+
+== H1: 12/12 satisfied (346 states, 1430 transitions)
+   no violated property

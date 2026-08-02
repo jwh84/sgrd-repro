@@ -1,0 +1,692 @@
+{
+  "B0": {
+    "states": 722,
+    "transitions": 3116,
+    "satisfied": 1,
+    "failed": {
+      "P1": {
+        "claim": "No restoration from a secret held on the platform",
+        "violating_transitions": 96,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "on-board",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "on-board",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P2": {
+        "claim": "No token replay: a consumed authorisation cannot restore again",
+        "violating_transitions": 176,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": true
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P3": {
+        "claim": "No restoration while the adversary holds physical possession",
+        "violating_transitions": 128,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P4": {
+        "claim": "No restoration outside the navigational safe-state envelope",
+        "violating_transitions": 136,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": false,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": false,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P5": {
+        "claim": "Ordered staging R0-R3 is never bypassed",
+        "violating_transitions": 272,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P6": {
+        "claim": "Capability is restored only after post-possession attestation",
+        "violating_transitions": 272,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P7": {
+        "claim": "Denial is durable: no extraction during an active denial episode",
+        "violating_transitions": 76,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "none",
+              "fresh": false,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "extract",
+            "to": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": true,
+              "auth": "none",
+              "fresh": false,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            }
+          }
+        ]
+      },
+      "P8": {
+        "claim": "A tampered configuration is never restored to capability",
+        "violating_transitions": 136,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": true,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": true,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P10": {
+        "claim": "Coerced holders below the threshold cannot restore",
+        "violating_transitions": 96,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P11": {
+        "claim": "Navigation capability survives every denial state",
+        "violating_transitions": 1356,
+        "examples": [
+          {
+            "from": {
+              "phase": "NORMAL",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "none",
+              "fresh": false,
+              "safe": true,
+              "used": false,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "deny",
+            "to": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "none",
+              "fresh": false,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            }
+          }
+        ]
+      },
+      "P12": {
+        "claim": "Command authority is never held while the adversary holds the platform",
+        "violating_transitions": 416,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": false,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": true,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": false,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "B1": {
+    "states": 514,
+    "transitions": 2280,
+    "satisfied": 11,
+    "failed": {
+      "P10": {
+        "claim": "Coerced holders below the threshold cannot restore",
+        "violating_transitions": 4,
+        "examples": [
+          {
+            "from": {
+              "phase": "R3",
+              "possessed": false,
+              "tampered": false,
+              "attested": true,
+              "keys": false,
+              "extracted": false,
+              "auth": "coerced",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            },
+            "action": "R3_restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": false,
+              "tampered": false,
+              "attested": true,
+              "keys": true,
+              "extracted": false,
+              "auth": "none",
+              "fresh": false,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "B2": {
+    "states": 234,
+    "transitions": 916,
+    "satisfied": 9,
+    "failed": {
+      "P5": {
+        "claim": "Ordered staging R0-R3 is never bypassed",
+        "violating_transitions": 16,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": false,
+              "tampered": false,
+              "attested": false,
+              "keys": false,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": true,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": false,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P6": {
+        "claim": "Capability is restored only after post-possession attestation",
+        "violating_transitions": 16,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": false,
+              "tampered": false,
+              "attested": false,
+              "keys": false,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": true,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": false,
+              "tampered": false,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      },
+      "P8": {
+        "claim": "A tampered configuration is never restored to capability",
+        "violating_transitions": 8,
+        "examples": [
+          {
+            "from": {
+              "phase": "DENIED",
+              "possessed": false,
+              "tampered": true,
+              "attested": false,
+              "keys": false,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": false,
+              "denied": true,
+              "nav_available": true,
+              "command_owner": "autonomous",
+              "sensor_trusted": false
+            },
+            "action": "restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": false,
+              "tampered": true,
+              "attested": false,
+              "keys": true,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": true,
+              "used": true,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "B3": {
+    "states": 266,
+    "transitions": 1104,
+    "satisfied": 11,
+    "failed": {
+      "P4": {
+        "claim": "No restoration outside the navigational safe-state envelope",
+        "violating_transitions": 4,
+        "examples": [
+          {
+            "from": {
+              "phase": "R3",
+              "possessed": false,
+              "tampered": false,
+              "attested": true,
+              "keys": false,
+              "extracted": false,
+              "auth": "legitimate",
+              "fresh": true,
+              "safe": false,
+              "used": false,
+              "denied": true,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            },
+            "action": "R3_restore",
+            "to": {
+              "phase": "RESTORED",
+              "possessed": false,
+              "tampered": false,
+              "attested": true,
+              "keys": true,
+              "extracted": false,
+              "auth": "none",
+              "fresh": false,
+              "safe": false,
+              "used": true,
+              "denied": false,
+              "nav_available": true,
+              "command_owner": "roc",
+              "sensor_trusted": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "H1": {
+    "states": 346,
+    "transitions": 1430,
+    "satisfied": 12,
+    "failed": {}
+  }
+}
