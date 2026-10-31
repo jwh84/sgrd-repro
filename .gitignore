@@ -1,0 +1,17 @@
+# 파이썬 바이트코드. 공개 재현 저장소에 들어가면 안 된다.
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 가상환경
+.venv/
+venv/
+env/
+
+# 편집기·운영체제가 남기는 것
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store

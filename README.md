@@ -36,12 +36,70 @@ to make any discrepancy an exit code, `--no-figures` to skip matplotlib.
 | `results/asam-audit.csv` | The 16 retained observations and the 16 removals, with the rule that produced each. |
 | `results/figures/` | Regenerated figures. |
 | `tests/test_sgrd.py` | Invariants, reproduction, and the three findings stated as predicates. |
+| `sgrd/refimpl/` | Reference implementation: the group, threshold proxy re-encryption with share-validity proofs, the recovery exchange, and the staged controller. |
+| `sgrd/refimpl/store.py` | Non-volatile capsule storage and the commit protocol, with a device that can be made to lose power at a named instant. |
+| `sgrd/refimpl/tpm.py`, `pcp.py` | TPM 2.0 over Windows TBS, and TPM-resident keys through the Platform Crypto Provider. Both in ctypes, no external TSS. |
+| `run_refimpl.py` | Experiments S1–S6 and A1–A4 (tier 0), T1–T5 (tier 1). |
+| `results/refimpl.{json,txt}` | Every check and timing from that run. |
+| `tests/test_refimpl.py` | Constants, primitives, and S1–S5/T1–T5 as regression tests. |
 
 ```bash
 python tests/test_sgrd.py     # 34 tests, no pytest needed
 pytest -q                     # if you have it
 python dump_counterexamples.py --limit 3
 ```
+
+## Reference implementation
+
+`run_all.py` checks the controller's *logic* over an abstract transition system
+in which authority is one of four strings. `run_refimpl.py` checks the same
+controller where those values have to be produced by real signatures, a real
+transcript hash, a real monotonic counter, and a real manifest comparison.
+
+```bash
+python run_refimpl.py --strict     # ~3 minutes, 85 checks
+python tests/test_refimpl.py       # 43 tests, no pytest needed
+```
+
+**Tier 0 (S1–S6)** needs nothing but an interpreter. Every check asserts the
+*reason* for a refusal, not merely that one occurred. The one experiment that
+measures rather than refuses is the latency budget, and its point is negative:
+the whole cryptographic exchange runs four and a half orders of magnitude below
+the quorum-gathering time that dominates the paper's 23-hour mean restoration,
+so no plausible change to it moves any quantitative claim.
+
+**Crash consistency (A1–A4)** covers the capsule commit. Power is cut before
+every device operation, under every subset of pending writes that might have
+reached the medium anyway — so reordering is covered, not just loss. A2 found a
+real defect in the first version of the protocol: it chose the counter record by
+epoch parity, overwriting the only valid record every second commit, and a write
+torn there destroyed the store. A3 is an ablation: two of the three syncs are
+load-bearing and the third is not, which is worth knowing and is not visible by
+inspection. A4 kills a real process writing real files and checks the outcome
+against what the simulation predicted.
+
+**Tier 1 (T1–T5)** needs a TPM 2.0, which every machine meeting the Windows 11
+installation requirement has. It is skipped, not failed, where there is none
+(`--no-tpm` skips it explicitly). The result worth reading is T3: a secret
+sealed to the platform's measured state is released by the chip only in that
+state, and a difference in one of the eight boot PCRs is enough for it to
+refuse. That is what R1 does, enforced by hardware rather than by the
+controller.
+
+Tier 1 changes no persistent state. Keys are created under the TPM's null
+hierarchy, CNG keys are deleted on exit, no NV index is defined, no ownership is
+taken, and no PCR is written — Windows blocks PCR writes from user mode in any
+case, which is why T3 seals to *differing* states rather than mutating one.
+
+**What is still not established.** Zeroisation completeness, PUF error rates,
+the behaviour of the storage *medium* under power loss, and memory residue after
+erasure. A refusal in software is a refusal by the specified logic, not by a
+module on a ship; a TPM is an analogue of the components the design calls for,
+not those components — it is not a PUF, its PCRs measure the boot chain rather
+than the autonomy stack, and its clock is not the design's counter; and A1–A4
+settle the commit algorithm, not the device it runs on.
+`store.MEDIUM_REQUIREMENTS` states what the algorithm needs of that device, in
+a form that can be checked against a datasheet.
 
 `REPRODUCTION.md` documents the chain's generator, the three load-bearing
 modelling choices, and the known gaps. **Read it before citing any number from

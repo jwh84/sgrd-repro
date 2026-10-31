@@ -1,2 +1,5 @@
 numpy>=1.24
 matplotlib>=3.7
+# Only for the tier-0 reference implementation (run_refimpl.py): AES-GCM and
+# HKDF. The group arithmetic is plain int, so nothing else is needed.
+cryptography>=42.0

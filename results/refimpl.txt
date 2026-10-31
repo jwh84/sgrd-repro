@@ -1,0 +1,420 @@
+----------------------------------------------------------------------------------------
+SGRD tier-0 reference implementation -- Section sec:impl, experiments S1-S6
+----------------------------------------------------------------------------------------
+
+Parameters
+  t              3
+  n              4
+  orgs           ['operator-roc', 'class-society', 'owner-escrow', 'commercial-escrow']
+  group          RFC 3526 2048-bit MODP, quadratic-residue subgroup
+  group_bits     2048
+  dem            AES-256-GCM
+  kdf            HKDF-SHA256
+  hash           SHA-256
+  signature      Schnorr over the same group
+
+Group self-check (the embedded RFC 3526 constant, verified not assumed)
+  p_is_2048_bit        ok
+  p_is_prime           ok
+  q_is_prime           ok
+  p_is_safe_prime      ok
+  g_has_order_q        ok
+  g_is_a_residue       ok
+
+----------------------------------------------------------------------------------------
+TIER 0 -- no security hardware
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+S1  Threshold assembly at t, refusal below t, attributed bad shares
+    12/12 checks passed
+----------------------------------------------------------------------------------------
+  ok  open with holders (1, 2, 3)
+        -> accepted
+        all 4 of the 3-subsets
+  ok  open with holders (1, 2, 4)
+        -> accepted
+        all 4 of the 3-subsets
+  ok  open with holders (1, 3, 4)
+        -> accepted
+        all 4 of the 3-subsets
+  ok  open with holders (2, 3, 4)
+        -> accepted
+        all 4 of the 3-subsets
+  ok  refuse with holders (1, 2)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  refuse with holders (1, 3)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  refuse with holders (1, 4)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  refuse with holders (2, 3)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  refuse with holders (2, 4)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  refuse with holders (3, 4)
+        -> InvalidTag
+        below threshold: an authentication failure, not a partial answer
+  ok  malformed share is attributed to its holder
+        -> share_rejected/proof failed on D_i, E_i, V_i [holder 2]
+        requirement 3: detectable, not merely fatal
+  ok  shares bound to another ephemeral key
+        -> InvalidTag
+
+----------------------------------------------------------------------------------------
+S2  Combiner ignorance, by ablation against the unblinded construction
+    5/5 checks passed
+----------------------------------------------------------------------------------------
+  ok  combiner cannot open the assembly (as specified)
+        -> cannot open
+        the ablation is expected to open it; that is the finding
+  ok  K_e does not appear in the combiner's view (as specified)
+        -> absent
+        a byte-level check only; it cannot speak to computational hiding
+  ok  combiner cannot open the assembly (ablation: no blinding)
+        -> OPENS K_e
+        the ablation is expected to open it; that is the finding
+  ok  K_e does not appear in the combiner's view (ablation: no blinding)
+        -> absent
+        a byte-level check only; it cannot speak to computational hiding
+  ok  blinding is load-bearing
+        -> yes
+        specified construction hides K_e from the combiner; the same code with k_i = 0
+        does not
+
+----------------------------------------------------------------------------------------
+S3  All nine transcript bindings of eq:token, one field at a time
+    10/10 checks passed
+----------------------------------------------------------------------------------------
+  ok  control: unperturbed transcript is admitted
+        -> accepted
+  ok  altering vessel_id after signing
+        -> transcript_mismatch [vessel_id]
+        caught by the platform's own recomputation
+  ok  altering h_puf after signing
+        -> transcript_mismatch [h_puf]
+        caught by the platform's own recomputation
+  ok  altering nonce after signing
+        -> transcript_mismatch [nonce]
+        caught by the platform's own recomputation
+  ok  altering counter after signing
+        -> below_threshold [0 of 3]
+        caught by the signature
+  ok  altering h_safe after signing
+        -> transcript_mismatch [h_safe]
+        caught by the platform's own recomputation
+  ok  altering h_att after signing
+        -> transcript_mismatch [h_att]
+        caught by the platform's own recomputation
+  ok  altering h_cust after signing
+        -> transcript_mismatch [h_cust]
+        caught by the platform's own recomputation
+  ok  altering rc_digest after signing
+        -> transcript_mismatch [rc_digest]
+        caught by the platform's own recomputation
+  ok  altering pk_eph after signing
+        -> transcript_mismatch [pk_eph]
+        caught by the platform's own recomputation
+
+----------------------------------------------------------------------------------------
+S4  Reuse, replay, pre-minting, and the cost-free retry
+    9/9 checks passed
+----------------------------------------------------------------------------------------
+  ok  consumed token, original attestation
+        -> custody_wrong_episode [nonce mismatch]
+        A_cust carries the same nu as the token, so it is an independent replay
+        barrier and it refuses before the token is examined
+  ok  consumed token, currently valid attestation
+        -> transcript_mismatch [nonce,h_cust,rc_digest,pk_eph]
+        the new episode drew a new nonce and R3 committed a new epoch, so four of the
+        nine fields differ
+  ok  freshly signed token naming a stale counter
+        -> counter_not_fresh [1 <= 1]
+        everything else agrees, so this isolates the monotonic counter
+  ok  control: a token for counter+5 is arithmetically fresh
+        -> accepted
+        the counter rule of Section sec:design is `exceeds`, not `equals`, so the
+        counter does not catch this one
+  ok  pre-minted token spent in a later episode, valid attestation
+        -> transcript_mismatch [nonce,h_cust,pk_eph]
+        the nonce is what catches pre-minting, not the counter
+  ok  abort at R1 on a tampered manifest
+        -> attestation_mismatch [autonomy-stack]
+  ok  the counter was not consumed by the abort
+        -> accepted
+  ok  retry at the same counter value succeeds
+        -> accepted
+        Section sec:staged: a class C adversary who forces retries must not thereby
+        exhaust the owner's authority
+  ok  episode B token with episode A capsule opening
+        -> capsule_unwrap_failed [InvalidTag]
+        sk_eph for A was destroyed at the abort, so this is arithmetic, not policy
+
+----------------------------------------------------------------------------------------
+S5  The nine rejection tests of Table tab:impl-reject
+    11/11 checks passed
+----------------------------------------------------------------------------------------
+  ok  control: the unperturbed exchange restores
+        -> accepted
+  ok  row 1: consumed token re-presented
+        -> transcript_mismatch [nonce,h_cust,rc_digest,pk_eph]
+        P2. Refused on the episode nonce, not on the counter; see S4 for the counter
+        conjunct in isolation
+  ok  row 2: token from another episode
+        -> transcript_mismatch [nonce,h_cust,pk_eph]
+        P2
+  ok  row 3: token presented on a cloned board
+        -> transcript_mismatch [h_puf]
+        h_puf. The commitment differs, so the clone recomputes a different transcript
+  ok  row 4: R0 to R3 directly
+        -> stage_order [R3 from R0]
+        P5
+  ok  row 5: tampered manifest at R1
+        -> attestation_mismatch [perception-model]
+        P8. Returns to denial rather than reporting
+  ok  row 6: recovery without custody evidence
+        -> no_custody_attestation
+        P3
+  ok  row 7a: t-1 re-encryption shares
+        -> capsule_unwrap_failed [InvalidTag]
+        P10. The assembly does not open
+  ok  row 7b: t-1 signatures on the token
+        -> below_threshold [2 of 3]
+        P10. The token is not authority
+  ok  row 8: safe state lost before R2 completes
+        -> aborted_unsafe
+        P4. Aborts to denial rather than holding a half-restored vessel
+  ok  row 9: safe-state evidence absent on one source
+        -> unsafe [open-water]
+        P4. Section sec:safepred: none/safe reads false
+
+----------------------------------------------------------------------------------------
+CRASH CONSISTENCY OF THE CAPSULE COMMIT
+    10/10 checks passed
+----------------------------------------------------------------------------------------
+
+A1  Power cut before every operation of the commit
+  ok  A1 power cut before each of 6 operations, x4 epochs x 16 survival subsets
+        -> 384 coherent
+        224 rolled back to the previous epoch, 160 rolled forward to the new one; no
+        other outcome occurred. The subsets cover reordering: any pending write may or
+        may not have reached the medium
+  ok  A1 both outcomes actually occur
+        -> both
+        a protocol that only ever rolled back would pass the invariants and lose every
+        update
+
+A2  Torn writes at the boundaries that matter
+  ok  A2 torn writes at 8 boundaries x 6 operations
+        -> 96 coherent
+        including a record complete but for its last digest byte
+  ok  A2 a record with a valid digest over a truncated body
+        -> rejected
+        the magic and the digest agree; the length fields do not
+
+A3  Which syncs are load-bearing, by ablation
+  ok  A3 sync 1 of 3 removed, on the new slot record
+        -> load-bearing
+        204 invariant failures without it. First: I1 counter names epoch 2; 0 slots
+        hold it
+  ok  A3 sync 2 of 3 removed, on the counter
+        -> load-bearing
+        170 invariant failures without it. First: I1 counter names epoch 1; 0 slots
+        hold it
+  ok  A3 sync 3 of 3 removed, on the erase of the old slot
+        -> no effect in this sweep
+        removing it breaks nothing under any cut or survival subset, so it is
+        redundant for correctness -- it still bounds how much work a restart has to
+        redo
+  ok  A3 at least one sync is load-bearing
+        -> yes
+        2 of 3 syncs, when removed, break an invariant under some cut. The others are
+        not doing correctness work, and saying so is the point of the ablation
+
+A4  A real process killed while writing real files
+  ok  A4 real process killed at each of 6 operations
+        -> 12 coherent
+        12 of 12 children died before returning. Real files, real os.write and
+        os.fsync, os._exit at the fault point
+  ok  A4 the real runs match what the simulation predicted
+        -> 12 agree
+        the simulated counterpart of a killed process is the cut in which every
+        pending write survives, since the kernel flushes its page cache regardless of
+        what happened to the writer. Agreement is what licenses reading A1-A3, which
+        are simulated, as statements about the algorithm
+
+  What the medium is assumed to provide, and this does not check:
+    - a write reported complete is durable, or is reported not complete
+    - writes to distinct files are not reordered across an intervening sync
+    - a torn write may corrupt a record but must not corrupt a different record
+    - the counter's two records do not share a failure domain with each other
+
+----------------------------------------------------------------------------------------
+S6  Latency budget of the recovery path
+----------------------------------------------------------------------------------------
+operation                                        n   mean ms  median ms    p95 ms
+capsule seal (platform, at R3)                  20     68.45      59.22    124.67
+re-encryption share + proof (one holder)        20    246.31     242.44    289.98
+share proof verification (one share)            20    268.23     274.71    300.69
+combine 3 shares (incl. verification)           20    928.81     911.95   1132.03
+capsule unwrap (platform)                       20     51.98      51.88     55.04
+token signature (one holder)                    20     43.64      42.68     53.66
+token signature verification (one)              20     77.38      76.83     79.90
+custody attestation issue                       20     43.94      43.27     47.84
+transcript digest                             1000      0.00       0.00      0.00
+manifest comparison (4 entries)               1000      0.00       0.00      0.00
+ephemeral key generation                        20     21.49      21.36     22.27
+full episode: denial through R3                  5   2108.58    2070.75   2216.78
+
+  sum of the parts             1.750 s
+  measured end-to-end          2.109 s
+  quorum response time             4 h   (1/rho, Section sec:results)
+  mean restoration time           23 h   = 82,800 s
+  the exchange as a fraction of it         2.55e-05   (4.6 orders of magnitude below)
+
+  These are CPython `pow` on a 2048-bit modulus and are therefore a loose upper bound --
+  a tuned library would be roughly an order of magnitude faster and hardware more again.
+  The looseness runs in the safe direction: even at this bound the whole cryptographic
+  exchange is 4.6 orders of magnitude below the quorum-gathering time that dominates the
+  23-hour mean, so no plausible change to these operations moves any quantitative claim
+  in Section sec:results. The converse is why it is worth measuring at all: had they
+  come out in hours, the CTMC parameterisation would need redoing.
+
+----------------------------------------------------------------------------------------
+TIER 1 -- TPM 2.0
+----------------------------------------------------------------------------------------
+  TPM      STM ST33TPHF2XSPI, firmware 0x00010301.0x00000000, spec rev 159
+  provider Microsoft Platform Crypto Provider (ECDSA)
+  reset count 177, clock safe True, application PCR unextended True
+
+----------------------------------------------------------------------------------------
+T1  A secret the device cannot be separated from (TPM-resident key)
+    6/6 checks passed
+----------------------------------------------------------------------------------------
+  ok  T1 key is generated inside the TPM
+        -> ECDSA
+        provider: Microsoft Platform Crypto Provider
+  ok  T1 export policy forbids export
+        -> 0
+        NCRYPT_ALLOW_EXPORT_FLAG and friends all clear
+  ok  T1 TPM signature verifies under an independent library
+        -> verified
+        the TPM signed it; `cryptography` checked it against the exported public key
+  ok  T1 the same signature over a different message
+        -> rejected
+  ok  T1 private key export
+        -> refused [0x8009000a]
+        NTE_NOT_SUPPORTED. The private half has no representation outside the chip
+  ok  T1 a second key gives a different commitment
+        -> different
+        so the commitment identifies the key, as h_puf identifies the hull
+
+----------------------------------------------------------------------------------------
+T2  The platform's measured state (PCRs 0-7 as h_att)
+    6/6 checks passed
+----------------------------------------------------------------------------------------
+  ok  T2 boot PCRs are readable
+        -> 8
+        PCR0: UEFI firmware code, PCR4: boot manager and loader code, PCR7: Secure
+        Boot policy
+  ok  T2 measurements are stable across reads
+        -> stable
+        nothing extended them between the two reads, as expected on an idle system
+  ok  T2 the boot chain actually measured something
+        -> 8 of 8 populated
+        an all-zero PCR would mean nothing was measured into it
+  ok  T2 measurements are distinct from one another
+        -> 8 distinct
+  ok  T2 the application PCR is unextended
+        -> unextended
+        checked before T3 seals anything, so the experiment cannot disturb another
+        application's use of PCR 23
+  ok  T2 a quote digest can be formed from them
+        -> formed [cb2b762767cc26e00442583aeded2189]
+        this is what would go into h_att
+
+----------------------------------------------------------------------------------------
+T3  Sealing: a secret released only in the state it was sealed to
+    8/8 checks passed
+----------------------------------------------------------------------------------------
+  ok  T3 PCR extend from user mode
+        -> blocked by TBS
+        a Windows policy, not a TPM verdict. It is why the binding is shown by sealing
+        to differing states instead
+  ok  T3 PCR reset from user mode
+        -> blocked by TBS
+        a Windows policy, not a TPM verdict. It is why the binding is shown by sealing
+        to differing states instead
+  ok  T3 sealed to the live boot measurement
+        -> opened
+        the control. Without it the refusals below prove nothing
+  ok  T3 sealed to a state differing only in PCR0
+        -> refused [TPM_RC_POLICY_FAIL]
+        UEFI firmware code. One PCR of eight, and the chip will not release the secret
+  ok  T3 sealed to a state differing only in PCR4
+        -> refused [TPM_RC_POLICY_FAIL]
+        boot manager and loader code. One PCR of eight, and the chip will not release
+        the secret
+  ok  T3 sealed to a state differing only in PCR7
+        -> refused [TPM_RC_POLICY_FAIL]
+        Secure Boot policy. One PCR of eight, and the chip will not release the secret
+  ok  T3 sealed to the live measurement, second time
+        -> opened
+        repeatable, so the refusals were about the policy and not about exhausting
+        some resource
+  ok  T3 unseal without consulting the PCRs at all
+        -> refused
+        the session's policy digest stays zero, so it cannot match. userWithAuth is
+        clear on the object, which is what forces a policy session rather than a
+        password
+
+----------------------------------------------------------------------------------------
+T4  Values that cannot be wound back (TPM clock and reset count)
+    5/5 checks passed
+----------------------------------------------------------------------------------------
+  ok  T4 clock never decreases
+        -> monotonic [132245781 -> 132246012 ms]
+        5 readings over 0.25 s
+  ok  T4 clock advances with real time
+        -> advances
+        so it is a clock and not a constant
+  ok  T4 the TPM asserts the guarantee still holds
+        -> safe
+        TPMS_CLOCK_INFO.safe: cleared if the TPM cannot rule out that clock has moved
+        backwards
+  ok  T4 reset count is stable within a run
+        -> 1 value(s)
+        resetCount = 177: the number of TPM resets since it was last cleared, and it
+        only ever increases
+  ok  T4 hardware RNG returns distinct 32-byte draws
+        -> 4 distinct
+        not a randomness test; a liveness check on TPM2_GetRandom
+
+----------------------------------------------------------------------------------------
+T5  The tier-0 exchange driven by real hardware inputs
+    3/3 checks passed
+----------------------------------------------------------------------------------------
+  ok  T5 exchange completes with a TPM commitment and live PCRs
+        -> restored
+        h_puf from a TPM-resident key, h_att from PCRs 0-7
+  ok  T5 a changed boot measurement aborts at R1
+        -> attestation_mismatch [pcr04]
+        PCR 4 is the boot manager and loader. In the design this is R1 refusing; on
+        this machine the same refusal is available from the TPM itself (T3)
+  ok  T5 token presented on a board with a different device key
+        -> transcript_mismatch [h_puf]
+        refused on h_puf. Evidence about key binding, not about physical unclonability
+
+  What tier 1 does not establish: a TPM is not a PUF, so nothing here speaks to physical
+  unclonability; PCRs 0-7 measure the boot chain and not the autonomy stack; and the TPM
+  clock is monotonic hardware but it is not the design's counter, which wants an NV
+  index of type TPM_NT_COUNTER and therefore owner authorisation. Zeroisation
+  completeness and power-loss atomicity remain untouched.
+
+----------------------------------------------------------------------------------------
+TOTAL  85/85 checks passed
+----------------------------------------------------------------------------------------

@@ -1,0 +1,911 @@
+{
+  "group_self_check": {
+    "p_is_2048_bit": true,
+    "p_is_prime": true,
+    "q_is_prime": true,
+    "p_is_safe_prime": true,
+    "g_has_order_q": true,
+    "g_is_a_residue": true
+  },
+  "parameters": {
+    "t": 3,
+    "n": 4,
+    "orgs": [
+      "operator-roc",
+      "class-society",
+      "owner-escrow",
+      "commercial-escrow"
+    ],
+    "group": "RFC 3526 2048-bit MODP, quadratic-residue subgroup",
+    "group_bits": 2048,
+    "dem": "AES-256-GCM",
+    "kdf": "HKDF-SHA256",
+    "hash": "SHA-256",
+    "signature": "Schnorr over the same group"
+  },
+  "hardware": {
+    "tpm": {
+      "available": true,
+      "manufacturer": "STM",
+      "vendor_string": "ST33TPHF2XSPI",
+      "firmware_version": "0x00010301.0x00000000",
+      "spec_revision": "159",
+      "reset_count": 177,
+      "clock_safe": true,
+      "application_pcr_unextended": true
+    },
+    "platform_crypto_provider": {
+      "available": true,
+      "provider": "Microsoft Platform Crypto Provider",
+      "algorithm_group": "ECDSA",
+      "export_policy": 0
+    }
+  },
+  "n_checks": 85,
+  "n_passed": 85,
+  "checks": [
+    {
+      "experiment": "S1",
+      "name": "open with holders (1, 2, 3)",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "all 4 of the 3-subsets",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "open with holders (1, 2, 4)",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "all 4 of the 3-subsets",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "open with holders (1, 3, 4)",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "all 4 of the 3-subsets",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "open with holders (2, 3, 4)",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "all 4 of the 3-subsets",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (1, 2)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (1, 3)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (1, 4)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (2, 3)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (2, 4)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "refuse with holders (3, 4)",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "below threshold: an authentication failure, not a partial answer",
+      "detail": ""
+    },
+    {
+      "experiment": "S1",
+      "name": "malformed share is attributed to its holder",
+      "expected": "share_rejected/proof failed on D_i, E_i, V_i",
+      "observed": "share_rejected/proof failed on D_i, E_i, V_i",
+      "passed": true,
+      "note": "requirement 3: detectable, not merely fatal",
+      "detail": "holder 2"
+    },
+    {
+      "experiment": "S1",
+      "name": "shares bound to another ephemeral key",
+      "expected": "InvalidTag",
+      "observed": "InvalidTag",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "S2",
+      "name": "combiner cannot open the assembly (as specified)",
+      "expected": "cannot open",
+      "observed": "cannot open",
+      "passed": true,
+      "note": "the ablation is expected to open it; that is the finding",
+      "detail": ""
+    },
+    {
+      "experiment": "S2",
+      "name": "K_e does not appear in the combiner's view (as specified)",
+      "expected": "absent",
+      "observed": "absent",
+      "passed": true,
+      "note": "a byte-level check only; it cannot speak to computational hiding",
+      "detail": ""
+    },
+    {
+      "experiment": "S2",
+      "name": "combiner cannot open the assembly (ablation: no blinding)",
+      "expected": "cannot open",
+      "observed": "OPENS K_e",
+      "passed": true,
+      "note": "the ablation is expected to open it; that is the finding",
+      "detail": ""
+    },
+    {
+      "experiment": "S2",
+      "name": "K_e does not appear in the combiner's view (ablation: no blinding)",
+      "expected": "absent",
+      "observed": "absent",
+      "passed": true,
+      "note": "a byte-level check only; it cannot speak to computational hiding",
+      "detail": ""
+    },
+    {
+      "experiment": "S2",
+      "name": "blinding is load-bearing",
+      "expected": "yes",
+      "observed": "yes",
+      "passed": true,
+      "note": "specified construction hides K_e from the combiner; the same code with k_i = 0 does not",
+      "detail": ""
+    },
+    {
+      "experiment": "S3",
+      "name": "control: unperturbed transcript is admitted",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "S3",
+      "name": "altering vessel_id after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "vessel_id"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering h_puf after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "h_puf"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering nonce after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "nonce"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering counter after signing",
+      "expected": "below_threshold",
+      "observed": "below_threshold",
+      "passed": true,
+      "note": "caught by the signature",
+      "detail": "0 of 3"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering h_safe after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "h_safe"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering h_att after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "h_att"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering h_cust after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "h_cust"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering rc_digest after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "rc_digest"
+    },
+    {
+      "experiment": "S3",
+      "name": "altering pk_eph after signing",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "caught by the platform's own recomputation",
+      "detail": "pk_eph"
+    },
+    {
+      "experiment": "S4",
+      "name": "consumed token, original attestation",
+      "expected": "custody_wrong_episode",
+      "observed": "custody_wrong_episode",
+      "passed": true,
+      "note": "A_cust carries the same nu as the token, so it is an independent replay barrier and it refuses before the token is examined",
+      "detail": "nonce mismatch"
+    },
+    {
+      "experiment": "S4",
+      "name": "consumed token, currently valid attestation",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "the new episode drew a new nonce and R3 committed a new epoch, so four of the nine fields differ",
+      "detail": "nonce,h_cust,rc_digest,pk_eph"
+    },
+    {
+      "experiment": "S4",
+      "name": "freshly signed token naming a stale counter",
+      "expected": "counter_not_fresh",
+      "observed": "counter_not_fresh",
+      "passed": true,
+      "note": "everything else agrees, so this isolates the monotonic counter",
+      "detail": "1 <= 1"
+    },
+    {
+      "experiment": "S4",
+      "name": "control: a token for counter+5 is arithmetically fresh",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "the counter rule of Section sec:design is `exceeds`, not `equals`, so the counter does not catch this one",
+      "detail": ""
+    },
+    {
+      "experiment": "S4",
+      "name": "pre-minted token spent in a later episode, valid attestation",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "the nonce is what catches pre-minting, not the counter",
+      "detail": "nonce,h_cust,pk_eph"
+    },
+    {
+      "experiment": "S4",
+      "name": "abort at R1 on a tampered manifest",
+      "expected": "attestation_mismatch",
+      "observed": "attestation_mismatch",
+      "passed": true,
+      "note": "",
+      "detail": "autonomy-stack"
+    },
+    {
+      "experiment": "S4",
+      "name": "the counter was not consumed by the abort",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "S4",
+      "name": "retry at the same counter value succeeds",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "Section sec:staged: a class C adversary who forces retries must not thereby exhaust the owner's authority",
+      "detail": ""
+    },
+    {
+      "experiment": "S4",
+      "name": "episode B token with episode A capsule opening",
+      "expected": "capsule_unwrap_failed",
+      "observed": "capsule_unwrap_failed",
+      "passed": true,
+      "note": "sk_eph for A was destroyed at the abort, so this is arithmetic, not policy",
+      "detail": "InvalidTag"
+    },
+    {
+      "experiment": "S5",
+      "name": "control: the unperturbed exchange restores",
+      "expected": "accepted",
+      "observed": "accepted",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "S5",
+      "name": "row 1: consumed token re-presented",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "P2. Refused on the episode nonce, not on the counter; see S4 for the counter conjunct in isolation",
+      "detail": "nonce,h_cust,rc_digest,pk_eph"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 2: token from another episode",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "P2",
+      "detail": "nonce,h_cust,pk_eph"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 3: token presented on a cloned board",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "h_puf. The commitment differs, so the clone recomputes a different transcript",
+      "detail": "h_puf"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 4: R0 to R3 directly",
+      "expected": "stage_order",
+      "observed": "stage_order",
+      "passed": true,
+      "note": "P5",
+      "detail": "R3 from R0"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 5: tampered manifest at R1",
+      "expected": "attestation_mismatch",
+      "observed": "attestation_mismatch",
+      "passed": true,
+      "note": "P8. Returns to denial rather than reporting",
+      "detail": "perception-model"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 6: recovery without custody evidence",
+      "expected": "no_custody_attestation",
+      "observed": "no_custody_attestation",
+      "passed": true,
+      "note": "P3",
+      "detail": ""
+    },
+    {
+      "experiment": "S5",
+      "name": "row 7a: t-1 re-encryption shares",
+      "expected": "capsule_unwrap_failed",
+      "observed": "capsule_unwrap_failed",
+      "passed": true,
+      "note": "P10. The assembly does not open",
+      "detail": "InvalidTag"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 7b: t-1 signatures on the token",
+      "expected": "below_threshold",
+      "observed": "below_threshold",
+      "passed": true,
+      "note": "P10. The token is not authority",
+      "detail": "2 of 3"
+    },
+    {
+      "experiment": "S5",
+      "name": "row 8: safe state lost before R2 completes",
+      "expected": "aborted_unsafe",
+      "observed": "aborted_unsafe",
+      "passed": true,
+      "note": "P4. Aborts to denial rather than holding a half-restored vessel",
+      "detail": ""
+    },
+    {
+      "experiment": "S5",
+      "name": "row 9: safe-state evidence absent on one source",
+      "expected": "unsafe",
+      "observed": "unsafe",
+      "passed": true,
+      "note": "P4. Section sec:safepred: none/safe reads false",
+      "detail": "open-water"
+    },
+    {
+      "experiment": "A",
+      "name": "A1 power cut before each of 6 operations, x4 epochs x 16 survival subsets",
+      "expected": "384 coherent",
+      "observed": "384 coherent",
+      "passed": true,
+      "note": "224 rolled back to the previous epoch, 160 rolled forward to the new one; no other outcome occurred. The subsets cover reordering: any pending write may or may not have reached the medium",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A1 both outcomes actually occur",
+      "expected": "both",
+      "observed": "both",
+      "passed": true,
+      "note": "a protocol that only ever rolled back would pass the invariants and lose every update",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A2 torn writes at 8 boundaries x 6 operations",
+      "expected": "96 coherent",
+      "observed": "96 coherent",
+      "passed": true,
+      "note": "including a record complete but for its last digest byte",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A2 a record with a valid digest over a truncated body",
+      "expected": "rejected",
+      "observed": "rejected",
+      "passed": true,
+      "note": "the magic and the digest agree; the length fields do not",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A3 sync 1 of 3 removed, on the new slot record",
+      "expected": "load-bearing",
+      "observed": "load-bearing",
+      "passed": true,
+      "note": "204 invariant failures without it. First: I1 counter names epoch 2; 0 slots hold it",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A3 sync 2 of 3 removed, on the counter",
+      "expected": "load-bearing",
+      "observed": "load-bearing",
+      "passed": true,
+      "note": "170 invariant failures without it. First: I1 counter names epoch 1; 0 slots hold it",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A3 sync 3 of 3 removed, on the erase of the old slot",
+      "expected": "no effect in this sweep",
+      "observed": "no effect in this sweep",
+      "passed": true,
+      "note": "removing it breaks nothing under any cut or survival subset, so it is redundant for correctness -- it still bounds how much work a restart has to redo",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A3 at least one sync is load-bearing",
+      "expected": "yes",
+      "observed": "yes",
+      "passed": true,
+      "note": "2 of 3 syncs, when removed, break an invariant under some cut. The others are not doing correctness work, and saying so is the point of the ablation",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A4 real process killed at each of 6 operations",
+      "expected": "12 coherent",
+      "observed": "12 coherent",
+      "passed": true,
+      "note": "12 of 12 children died before returning. Real files, real os.write and os.fsync, os._exit at the fault point",
+      "detail": ""
+    },
+    {
+      "experiment": "A",
+      "name": "A4 the real runs match what the simulation predicted",
+      "expected": "12 agree",
+      "observed": "12 agree",
+      "passed": true,
+      "note": "the simulated counterpart of a killed process is the cut in which every pending write survives, since the kernel flushes its page cache regardless of what happened to the writer. Agreement is what licenses reading A1-A3, which are simulated, as statements about the algorithm",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T1 key is generated inside the TPM",
+      "expected": "ECDSA",
+      "observed": "ECDSA",
+      "passed": true,
+      "note": "provider: Microsoft Platform Crypto Provider",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T1 export policy forbids export",
+      "expected": "0",
+      "observed": "0",
+      "passed": true,
+      "note": "NCRYPT_ALLOW_EXPORT_FLAG and friends all clear",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T1 TPM signature verifies under an independent library",
+      "expected": "verified",
+      "observed": "verified",
+      "passed": true,
+      "note": "the TPM signed it; `cryptography` checked it against the exported public key",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T1 the same signature over a different message",
+      "expected": "rejected",
+      "observed": "rejected",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T1 private key export",
+      "expected": "refused",
+      "observed": "refused",
+      "passed": true,
+      "note": "NTE_NOT_SUPPORTED. The private half has no representation outside the chip",
+      "detail": "0x8009000a"
+    },
+    {
+      "experiment": "T",
+      "name": "T1 a second key gives a different commitment",
+      "expected": "different",
+      "observed": "different",
+      "passed": true,
+      "note": "so the commitment identifies the key, as h_puf identifies the hull",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 boot PCRs are readable",
+      "expected": "8",
+      "observed": "8",
+      "passed": true,
+      "note": "PCR0: UEFI firmware code, PCR4: boot manager and loader code, PCR7: Secure Boot policy",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 measurements are stable across reads",
+      "expected": "stable",
+      "observed": "stable",
+      "passed": true,
+      "note": "nothing extended them between the two reads, as expected on an idle system",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 the boot chain actually measured something",
+      "expected": "8 of 8 populated",
+      "observed": "8 of 8 populated",
+      "passed": true,
+      "note": "an all-zero PCR would mean nothing was measured into it",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 measurements are distinct from one another",
+      "expected": "8 distinct",
+      "observed": "8 distinct",
+      "passed": true,
+      "note": "",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 the application PCR is unextended",
+      "expected": "unextended",
+      "observed": "unextended",
+      "passed": true,
+      "note": "checked before T3 seals anything, so the experiment cannot disturb another application's use of PCR 23",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T2 a quote digest can be formed from them",
+      "expected": "formed",
+      "observed": "formed",
+      "passed": true,
+      "note": "this is what would go into h_att",
+      "detail": "cb2b762767cc26e00442583aeded2189"
+    },
+    {
+      "experiment": "T",
+      "name": "T3 PCR extend from user mode",
+      "expected": "blocked by TBS",
+      "observed": "blocked by TBS",
+      "passed": true,
+      "note": "a Windows policy, not a TPM verdict. It is why the binding is shown by sealing to differing states instead",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T3 PCR reset from user mode",
+      "expected": "blocked by TBS",
+      "observed": "blocked by TBS",
+      "passed": true,
+      "note": "a Windows policy, not a TPM verdict. It is why the binding is shown by sealing to differing states instead",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T3 sealed to the live boot measurement",
+      "expected": "opened",
+      "observed": "opened",
+      "passed": true,
+      "note": "the control. Without it the refusals below prove nothing",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T3 sealed to a state differing only in PCR0",
+      "expected": "refused",
+      "observed": "refused",
+      "passed": true,
+      "note": "UEFI firmware code. One PCR of eight, and the chip will not release the secret",
+      "detail": "TPM_RC_POLICY_FAIL"
+    },
+    {
+      "experiment": "T",
+      "name": "T3 sealed to a state differing only in PCR4",
+      "expected": "refused",
+      "observed": "refused",
+      "passed": true,
+      "note": "boot manager and loader code. One PCR of eight, and the chip will not release the secret",
+      "detail": "TPM_RC_POLICY_FAIL"
+    },
+    {
+      "experiment": "T",
+      "name": "T3 sealed to a state differing only in PCR7",
+      "expected": "refused",
+      "observed": "refused",
+      "passed": true,
+      "note": "Secure Boot policy. One PCR of eight, and the chip will not release the secret",
+      "detail": "TPM_RC_POLICY_FAIL"
+    },
+    {
+      "experiment": "T",
+      "name": "T3 sealed to the live measurement, second time",
+      "expected": "opened",
+      "observed": "opened",
+      "passed": true,
+      "note": "repeatable, so the refusals were about the policy and not about exhausting some resource",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T3 unseal without consulting the PCRs at all",
+      "expected": "refused",
+      "observed": "refused",
+      "passed": true,
+      "note": "the session's policy digest stays zero, so it cannot match. userWithAuth is clear on the object, which is what forces a policy session rather than a password",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T4 clock never decreases",
+      "expected": "monotonic",
+      "observed": "monotonic",
+      "passed": true,
+      "note": "5 readings over 0.25 s",
+      "detail": "132245781 -> 132246012 ms"
+    },
+    {
+      "experiment": "T",
+      "name": "T4 clock advances with real time",
+      "expected": "advances",
+      "observed": "advances",
+      "passed": true,
+      "note": "so it is a clock and not a constant",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T4 the TPM asserts the guarantee still holds",
+      "expected": "safe",
+      "observed": "safe",
+      "passed": true,
+      "note": "TPMS_CLOCK_INFO.safe: cleared if the TPM cannot rule out that clock has moved backwards",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T4 reset count is stable within a run",
+      "expected": "1 value(s)",
+      "observed": "1 value(s)",
+      "passed": true,
+      "note": "resetCount = 177: the number of TPM resets since it was last cleared, and it only ever increases",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T4 hardware RNG returns distinct 32-byte draws",
+      "expected": "4 distinct",
+      "observed": "4 distinct",
+      "passed": true,
+      "note": "not a randomness test; a liveness check on TPM2_GetRandom",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T5 exchange completes with a TPM commitment and live PCRs",
+      "expected": "restored",
+      "observed": "restored",
+      "passed": true,
+      "note": "h_puf from a TPM-resident key, h_att from PCRs 0-7",
+      "detail": ""
+    },
+    {
+      "experiment": "T",
+      "name": "T5 a changed boot measurement aborts at R1",
+      "expected": "attestation_mismatch",
+      "observed": "attestation_mismatch",
+      "passed": true,
+      "note": "PCR 4 is the boot manager and loader. In the design this is R1 refusing; on this machine the same refusal is available from the TPM itself (T3)",
+      "detail": "pcr04"
+    },
+    {
+      "experiment": "T",
+      "name": "T5 token presented on a board with a different device key",
+      "expected": "transcript_mismatch",
+      "observed": "transcript_mismatch",
+      "passed": true,
+      "note": "refused on h_puf. Evidence about key binding, not about physical unclonability",
+      "detail": "h_puf"
+    }
+  ],
+  "timings": [
+    {
+      "operation": "capsule seal (platform, at R3)",
+      "n": 20,
+      "mean_ms": 68.45289501361549,
+      "median_ms": 59.219849994406104,
+      "p95_ms": 124.66550013050437,
+      "max_ms": 124.66550013050437
+    },
+    {
+      "operation": "re-encryption share + proof (one holder)",
+      "n": 20,
+      "mean_ms": 246.31062999833375,
+      "median_ms": 242.43889981880784,
+      "p95_ms": 289.983700029552,
+      "max_ms": 289.983700029552
+    },
+    {
+      "operation": "share proof verification (one share)",
+      "n": 20,
+      "mean_ms": 268.23399004060775,
+      "median_ms": 274.711349979043,
+      "p95_ms": 300.69420021027327,
+      "max_ms": 300.69420021027327
+    },
+    {
+      "operation": "combine 3 shares (incl. verification)",
+      "n": 20,
+      "mean_ms": 928.8140549790114,
+      "median_ms": 911.9536499492824,
+      "p95_ms": 1132.0346998982131,
+      "max_ms": 1132.0346998982131
+    },
+    {
+      "operation": "capsule unwrap (platform)",
+      "n": 20,
+      "mean_ms": 51.97664999868721,
+      "median_ms": 51.88239994458854,
+      "p95_ms": 55.03990035504103,
+      "max_ms": 55.03990035504103
+    },
+    {
+      "operation": "token signature (one holder)",
+      "n": 20,
+      "mean_ms": 43.6361399712041,
+      "median_ms": 42.678800178691745,
+      "p95_ms": 53.65779995918274,
+      "max_ms": 53.65779995918274
+    },
+    {
+      "operation": "token signature verification (one)",
+      "n": 20,
+      "mean_ms": 77.38019493408501,
+      "median_ms": 76.82760013267398,
+      "p95_ms": 79.89629963412881,
+      "max_ms": 79.89629963412881
+    },
+    {
+      "operation": "custody attestation issue",
+      "n": 20,
+      "mean_ms": 43.94158006180078,
+      "median_ms": 43.269099900498986,
+      "p95_ms": 47.84280015155673,
+      "max_ms": 47.84280015155673
+    },
+    {
+      "operation": "transcript digest",
+      "n": 1000,
+      "mean_ms": 0.002943705301731825,
+      "median_ms": 0.0029001384973526,
+      "p95_ms": 0.003000255674123764,
+      "max_ms": 0.009000301361083984
+    },
+    {
+      "operation": "manifest comparison (4 entries)",
+      "n": 1000,
+      "mean_ms": 0.00137409009039402,
+      "median_ms": 0.0012996606528759003,
+      "p95_ms": 0.001400243490934372,
+      "max_ms": 0.04719989374279976
+    },
+    {
+      "operation": "ephemeral key generation",
+      "n": 20,
+      "mean_ms": 21.491255005821586,
+      "median_ms": 21.363950101658702,
+      "p95_ms": 22.274100221693516,
+      "max_ms": 22.274100221693516
+    },
+    {
+      "operation": "full episode: denial through R3",
+      "n": 5,
+      "mean_ms": 2108.5790200158954,
+      "median_ms": 2070.7518002018332,
+      "p95_ms": 2216.7756999842823,
+      "max_ms": 2216.7756999842823
+    }
+  ]
+}
