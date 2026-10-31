@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------
-SGRD tier-0 reference implementation -- Section sec:impl, experiments S1-S6
+SGRD tier-0 reference implementation -- Section sec:impl, experiments S1-S5
 ----------------------------------------------------------------------------------------
 
 Parameters
@@ -257,24 +257,24 @@ A4  A real process killed while writing real files
 S6  Latency budget of the recovery path
 ----------------------------------------------------------------------------------------
 operation                                        n   mean ms  median ms    p95 ms
-capsule seal (platform, at R3)                  20     68.45      59.22    124.67
-re-encryption share + proof (one holder)        20    246.31     242.44    289.98
-share proof verification (one share)            20    268.23     274.71    300.69
-combine 3 shares (incl. verification)           20    928.81     911.95   1132.03
-capsule unwrap (platform)                       20     51.98      51.88     55.04
-token signature (one holder)                    20     43.64      42.68     53.66
-token signature verification (one)              20     77.38      76.83     79.90
-custody attestation issue                       20     43.94      43.27     47.84
+capsule seal (platform, at R3)                  20     47.73      47.43     52.01
+re-encryption share + proof (one holder)        20    191.14     190.58    195.25
+share proof verification (one share)            20    237.96     235.72    258.53
+combine 3 shares (incl. verification)           20    806.90     806.36    824.33
+capsule unwrap (platform)                       20     52.07      52.03     53.77
+token signature (one holder)                    20     43.24      43.11     45.48
+token signature verification (one)              20     78.23      77.20     86.03
+custody attestation issue                       20     43.62      43.08     48.24
 transcript digest                             1000      0.00       0.00      0.00
 manifest comparison (4 entries)               1000      0.00       0.00      0.00
-ephemeral key generation                        20     21.49      21.36     22.27
-full episode: denial through R3                  5   2108.58    2070.75   2216.78
+ephemeral key generation                        20     21.90      21.70     25.38
+full episode: denial through R3                 20   1987.83    1984.51   2014.57
 
-  sum of the parts             1.750 s
-  measured end-to-end          2.109 s
+  sum of the parts             1.523 s
+  measured end-to-end          1.988 s
   quorum response time             4 h   (1/rho, Section sec:results)
   mean restoration time           23 h   = 82,800 s
-  the exchange as a fraction of it         2.55e-05   (4.6 orders of magnitude below)
+  the exchange as a fraction of it         2.40e-05   (4.6 orders of magnitude below)
 
   These are CPython `pow` on a 2048-bit modulus and are therefore a loose upper bound --
   a tuned library would be roughly an order of magnitude faster and hardware more again.
@@ -377,7 +377,7 @@ T4  Values that cannot be wound back (TPM clock and reset count)
     5/5 checks passed
 ----------------------------------------------------------------------------------------
   ok  T4 clock never decreases
-        -> monotonic [132245781 -> 132246012 ms]
+        -> monotonic [132383900 -> 132384136 ms]
         5 readings over 0.25 s
   ok  T4 clock advances with real time
         -> advances

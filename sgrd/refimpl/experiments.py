@@ -644,9 +644,11 @@ def s6_latency_budget(base: pr.Scenario, n: int = 20) -> list[Timing]:
         _time("ephemeral key generation",
               lambda: gp.exp(gp.G, gp.rand_scalar()), n),
     ]
-    # The whole exchange, end to end, as the sum check.
+    # The whole exchange, end to end, as the sum check. It gets the same
+    # repetition count as the parts: at n // 4 the p95 of the episode row was
+    # just its maximum, which is not a percentile worth reporting.
     out.append(_time("full episode: denial through R3",
-                     lambda: pr.happy_path(_fresh(base)), max(3, n // 4)))
+                     lambda: pr.happy_path(_fresh(base)), n))
     return out
 
 
