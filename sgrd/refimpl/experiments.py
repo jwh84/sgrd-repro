@@ -575,6 +575,22 @@ def s5_rejection_suite(base: pr.Scenario) -> list[Check]:
 
 # --- S6: where the time goes -------------------------------------------------
 
+def _p95(sorted_samples: list[float]) -> float:
+    """Linearly interpolated 95th percentile, at position 0.95 * (n - 1).
+
+    The obvious `sorted_samples[int(0.95 * n)]` is wrong for small n: at
+    n = 20 it indexes 19, the last element, so the reported p95 was exactly
+    the maximum on every 20-repetition row. Raising n does not help by
+    itself -- int(0.95 * n) lands on the final index for all n <= 20. This
+    is the standard definition; `method="inclusive"` matches numpy's
+    default and reduces to the sample maximum only at the 100th percentile.
+    """
+    if len(sorted_samples) < 2:
+        return sorted_samples[-1]
+    return statistics.quantiles(sorted_samples, n=100,
+                                method="inclusive")[94]
+
+
 def _time(op: str, fn: Callable[[], object], n: int) -> Timing:
     samples = []
     for _ in range(n):
@@ -584,7 +600,7 @@ def _time(op: str, fn: Callable[[], object], n: int) -> Timing:
     samples.sort()
     return Timing(operation=op, n=n, mean_ms=statistics.fmean(samples),
                   median_ms=statistics.median(samples),
-                  p95_ms=samples[min(len(samples) - 1, int(0.95 * len(samples)))],
+                  p95_ms=_p95(samples),
                   max_ms=samples[-1])
 
 
@@ -645,8 +661,8 @@ def s6_latency_budget(base: pr.Scenario, n: int = 20) -> list[Timing]:
               lambda: gp.exp(gp.G, gp.rand_scalar()), n),
     ]
     # The whole exchange, end to end, as the sum check. It gets the same
-    # repetition count as the parts: at n // 4 the p95 of the episode row was
-    # just its maximum, which is not a percentile worth reporting.
+    # repetition count as the parts so the row is read against them on equal
+    # terms -- an episode costs about two seconds, so n = 20 is affordable.
     out.append(_time("full episode: denial through R3",
                      lambda: pr.happy_path(_fresh(base)), n))
     return out

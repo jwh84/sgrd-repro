@@ -257,29 +257,29 @@ A4  A real process killed while writing real files
 S6  Latency budget of the recovery path
 ----------------------------------------------------------------------------------------
 operation                                        n   mean ms  median ms    p95 ms
-capsule seal (platform, at R3)                  20     47.73      47.43     52.01
-re-encryption share + proof (one holder)        20    191.14     190.58    195.25
-share proof verification (one share)            20    237.96     235.72    258.53
-combine 3 shares (incl. verification)           20    806.90     806.36    824.33
-capsule unwrap (platform)                       20     52.07      52.03     53.77
-token signature (one holder)                    20     43.24      43.11     45.48
-token signature verification (one)              20     78.23      77.20     86.03
-custody attestation issue                       20     43.62      43.08     48.24
+capsule seal (platform, at R3)                  20     33.88      33.68     35.04
+re-encryption share + proof (one holder)        20    136.43     135.44    141.81
+share proof verification (one share)            20    173.87     170.88    185.78
+combine 3 shares (incl. verification)           20    610.48     589.29    671.51
+capsule unwrap (platform)                       20     37.43      37.06     38.89
+token signature (one holder)                    20     30.38      30.31     30.77
+token signature verification (one)              20     55.22      55.19     56.28
+custody attestation issue                       20     30.88      30.66     32.07
 transcript digest                             1000      0.00       0.00      0.00
 manifest comparison (4 entries)               1000      0.00       0.00      0.00
-ephemeral key generation                        20     21.90      21.70     25.38
-full episode: denial through R3                 20   1987.83    1984.51   2014.57
+ephemeral key generation                        20     15.55      15.48     16.02
+full episode: denial through R3                 20   1413.20    1410.74   1431.35
 
-  sum of the parts             1.523 s
-  measured end-to-end          1.988 s
+  sum of the parts             1.124 s
+  measured end-to-end          1.413 s
   quorum response time             4 h   (1/rho, Section sec:results)
   mean restoration time           23 h   = 82,800 s
-  the exchange as a fraction of it         2.40e-05   (4.6 orders of magnitude below)
+  the exchange as a fraction of it         1.71e-05   (4.8 orders of magnitude below)
 
   These are CPython `pow` on a 2048-bit modulus and are therefore a loose upper bound --
   a tuned library would be roughly an order of magnitude faster and hardware more again.
   The looseness runs in the safe direction: even at this bound the whole cryptographic
-  exchange is 4.6 orders of magnitude below the quorum-gathering time that dominates the
+  exchange is 4.8 orders of magnitude below the quorum-gathering time that dominates the
   23-hour mean, so no plausible change to these operations moves any quantitative claim
   in Section sec:results. The converse is why it is worth measuring at all: had they
   come out in hours, the CTMC parameterisation would need redoing.
@@ -377,7 +377,7 @@ T4  Values that cannot be wound back (TPM clock and reset count)
     5/5 checks passed
 ----------------------------------------------------------------------------------------
   ok  T4 clock never decreases
-        -> monotonic [132383900 -> 132384136 ms]
+        -> monotonic [132570838 -> 132571077 ms]
         5 readings over 0.25 s
   ok  T4 clock advances with real time
         -> advances
