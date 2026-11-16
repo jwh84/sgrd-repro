@@ -47,6 +47,17 @@ VARIANT_STYLE = {
 }
 
 
+#: Korean labels for the dissertation. The per-glyph fallback keeps the script
+#: portable; digits and Latin come from the same face as the Hangul.
+KOREAN_RC = {
+    "font.family": ["HCR Batang", "Malgun Gothic", "DejaVu Serif"],
+    "mathtext.fontset": "stix",
+    "axes.unicode_minus": False,
+}
+KOREAN_REGIMES = {"Pooled": "통합", "NAVAREA II": "NAVAREA II\n(기니만)",
+                  "Other NAVAREAs": "그 밖의\nNAVAREA"}
+
+
 def use_paper_style() -> None:
     """Match the IEEE Access two-column body text; recessive grid and axes."""
     mpl.rcParams.update({
@@ -90,7 +101,7 @@ def _regime_series(adversary: str = "A2"):
     return labels, [h for _, h in regimes], data
 
 
-def figure_regimes(outdir: Path, adversary: str = "A2") -> Path:
+def figure_regimes(outdir: Path, adversary: str = "A2", ko: bool = False) -> Path:
     """Fig. `fig:regimes`: extraction probability across the empirical regimes."""
     labels, hours, data = _regime_series(adversary)
     values = data["B0"]
@@ -115,11 +126,13 @@ def figure_regimes(outdir: Path, adversary: str = "A2") -> Path:
     # Short tick labels. At 3.5 in the full stratum names run into each other;
     # the caption carries them instead.
     short = {"Pooled": "Pooled"}
-    ax.set_xticklabels(
-        [short.get(l, l.split(chr(10))[0].replace("NAVAREA ", "NAVAREA "))
-         for l in labels], fontsize=7)
+    ticks = [short.get(l, l.split(chr(10))[0].replace("NAVAREA ", "NAVAREA "))
+             for l in labels]
+    ax.set_xticklabels([KOREAN_REGIMES[t.replace(chr(160), ' ')] for t in ticks] if ko else ticks,
+                       fontsize=7)
     ax.set_ylim(0, max(values) * 1.18)
-    ax.set_ylabel(f"P(extracted), adversary {adversary}", fontsize=7.5)
+    ax.set_ylabel(f"추출 확률 $P(\\mathrm{{ext}})$, 공격자 {adversary}" if ko
+                  else f"P(extracted), adversary {adversary}", fontsize=7.5)
     ax.tick_params(axis="y", labelsize=7)
     ax.grid(axis="y", zorder=0)
     ax.set_axisbelow(True)
@@ -128,7 +141,7 @@ def figure_regimes(outdir: Path, adversary: str = "A2") -> Path:
     return _save(fig, outdir, "sgrd-regimes")
 
 
-def figure_frontier(outdir: Path, adversary: str = "A2") -> Path:
+def figure_frontier(outdir: Path, adversary: str = "A2", ko: bool = False) -> Path:
     """Fig. `fig:frontier`: the threshold trade-off over the five-holder set."""
     ts = list(range(1, len(P.HOLDERS) + 1))
     rows = [ctmc.evaluate(P.Configuration(f"{t}-of-5", t, P.HOLDERS, "H1"),
@@ -146,11 +159,14 @@ def figure_frontier(outdir: Path, adversary: str = "A2") -> Path:
                              layout="constrained")
     panels = (
         (axes[0], p_u, VERMILLION, "o",
-         "$P_u$: adversary assembles authority", True, None),
+         "$P_u$: 공격자가 복원 권한을 조립할 확률" if ko
+         else "$P_u$: adversary assembles authority", True, None),
         (axes[1], p_loss, BLUE, "s",
-         "$P(\\mathrm{loss}\\mid c)$: recovered, then written off", False, (0, 1)),
+         "$P(\\mathrm{loss}\\mid c)$: 관리권 회복 뒤 영구 손실 확률" if ko
+         else "$P(\\mathrm{loss}\\mid c)$: recovered, then written off", False, (0, 1)),
         (axes[2], e_tc, GREEN, "^",
-         "$E[T_c]$ (h): custody regained $\\rightarrow$ restored", False, None),
+         "$E[T_c]$ (시간): 관리권 회복부터 복원까지" if ko
+         else "$E[T_c]$ (h): custody regained $\\rightarrow$ restored", False, None),
     )
 
     for ax, series, colour, marker, title, logy, ylim in panels:
@@ -176,27 +192,30 @@ def figure_frontier(outdir: Path, adversary: str = "A2") -> Path:
     for ax, series, fmt in ((axes[0], p_u, "{:.1e}"),
                             (axes[1], p_loss, "{:.3f}"),
                             (axes[2], e_tc, "{:.1f}")):
-        ax.set_xlim(0.42, 5.58)
+        ax.set_xlim(0.12, 5.58)
         for i, (dx, ha) in ((0, (-6, "right")), (len(ts) - 1, (6, "left"))):
             ax.annotate(fmt.format(series[i]), (ts[i], series[i]),
                         textcoords="offset points", xytext=(dx, 0),
                         ha=ha, va="center", fontsize=7, color=GREY,
                         annotation_clip=False)
 
-    axes[2].set_xlabel("recovery threshold $t$ (over $n=5$ holders)")
+    axes[2].set_xlabel("복원 임계값 $t$ (보유자 $n=5$)" if ko
+                       else "recovery threshold $t$ (over $n=5$ holders)")
     axes[2].set_xticks(ts)
     if viable:
         # Sit the band label low inside the shaded span: the P_u series descends
         # steeply across it, so anything above mid-panel would cross the line.
         axes[0].annotate(
-            f"viable band $t \\in \\{{{min(viable)},{max(viable)}\\}}$",
+            f"{'유효 대역' if ko else 'viable band'} "
+            f"$t \\in \\{{{min(viable)},{max(viable)}\\}}$",
             xy=((min(viable) + max(viable)) / 2, 0.22),
             xycoords=("data", "axes fraction"),
             ha="center", va="center", fontsize=7, color=GREY,
         )
 
-    fig.suptitle("Raising $t$ trades unauthorised restoration\n"
-                 "against permanent loss and latency", fontsize=8.5)
+    if not ko:   # The dissertation carries the title in its caption.
+        fig.suptitle("Raising $t$ trades unauthorised restoration\n"
+                     "against permanent loss and latency", fontsize=8.5)
     return _save(fig, outdir, "sgrd-frontier")
 
 
@@ -245,6 +264,110 @@ def figure_finding1(outdir: Path, adversary: str = "A2") -> Path:
     return _save(fig, outdir, "sgrd-finding1")
 
 
+def figure_compromise(outdir: Path) -> Path:
+    """Fig. `fig:compromise`: P_u against a common error factor on every c_i.
+
+    Korean labels, unlike the older figures, because this one was added for the
+    Korean dissertation. Identity rests on line style and a direct label as well
+    as hue, so it survives greyscale printing.
+    """
+    from . import sensitivity as S
+
+    style = {
+        "2-of-3": dict(color=GREEN, linestyle="-"),
+        "2-of-4": dict(color=BLUE, linestyle="-"),
+        "3-of-4": dict(color=PURPLE, linestyle="--"),
+        "3-of-5": dict(color=VERMILLION, linestyle="--"),
+    }
+    rows = {r["configuration"]: r for r in S.compromise_margin()}
+    scales = [10 ** (-1 + i * 0.02) for i in range(116)]   # 0.1x to ~20x
+
+    with mpl.rc_context({
+        **KOREAN_RC,
+        "font.size": 9, "axes.labelsize": 9.5, "legend.fontsize": 8.5,
+        "xtick.labelsize": 8.5, "ytick.labelsize": 8.5,
+    }):
+        fig, ax = plt.subplots(figsize=(5.6, 3.5), layout="constrained")
+        ax.axhline(S.P_U_LIMIT, color=GREY, linewidth=0.9, zorder=1)
+        ax.axvline(1.0, color=MUTED, linewidth=0.7, linestyle=":", zorder=1)
+        for name, t, members in S.MARGIN_CONFIGS:
+            c = [h.compromise for h in P.holder_set(*members)]
+            r = rows[name]
+            ax.plot(scales, [S.scaled_p_u(c, t, x) for x in scales], linewidth=1.8,
+                    label=f"{name} (기준 초과 {r['limit_scale']:.1f}배)",
+                    zorder=3, **style[name])
+            ax.plot([r["limit_scale"]], [S.P_U_LIMIT], marker="o", markersize=5.5,
+                    markeredgecolor="white", markeredgewidth=0.8, linestyle="none",
+                    color=style[name]["color"], zorder=4)
+        for t in (2, 3):
+            y = next(r["comonotone_p_u"] for r in rows.values() if r["t"] == t)
+            ax.plot([1.0], [y], marker="D", markersize=5.5, linestyle="none",
+                    markerfacecolor="white", markeredgecolor=GREY, zorder=5,
+                    label="보유자가 함께 훼손될 때" if t == 2 else None)
+            ax.annotate(f"$t={t}$", (1.0, y), textcoords="offset points",
+                        xytext=(-6, 3 if t == 2 else -3), ha="right", va="center", fontsize=8,
+                        color=GREY)
+        ax.annotate("수용 기준 $10^{-2}$", (0.105, S.P_U_LIMIT),
+                    textcoords="offset points", xytext=(0, 3), ha="left", va="bottom",
+                    fontsize=8.5, color=GREY)
+        ax.annotate("현재 값", (1.0, 3e-8), textcoords="offset points", xytext=(4, 0),
+                    ha="left", va="bottom", fontsize=8.5, color=GREY)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xlim(0.1, 20)
+        ax.set_ylim(1e-8, 1)
+        ax.set_xticks([0.1, 0.5, 1, 2, 5, 10, 20])
+        ax.set_xticklabels(["0.1", "0.5", "1", "2", "5", "10", "20"])
+        ax.minorticks_off()
+        ax.set_xlabel("모든 $c_i$에 곱한 배율 $s$")
+        ax.set_ylabel("$P_u$")
+        ax.grid(axis="y", zorder=0)
+        ax.set_axisbelow(True)
+        ax.legend(loc="lower right", frameon=False)
+        return _save(fig, outdir, "sgrd-compromise")
+
+
+def figure_availability(outdir: Path) -> Path:
+    """Fig. `fig:availability`: P(loss | c) against a common factor on every a_i."""
+    from . import sensitivity as S
+
+    style = {
+        "2-of-3": dict(color=GREEN, linestyle="-"),
+        "2-of-4": dict(color=BLUE, linestyle="-"),
+        "3-of-4": dict(color=PURPLE, linestyle="--"),
+        "3-of-5": dict(color=VERMILLION, linestyle="--"),
+    }
+    rows = {r["configuration"]: r for r in S.availability_margin()}
+    scales = [0.5 + i * 0.01 for i in range(51)]
+
+    with mpl.rc_context({
+        **KOREAN_RC,
+        "font.size": 9, "axes.labelsize": 9.5, "legend.fontsize": 8.5,
+        "xtick.labelsize": 8.5, "ytick.labelsize": 8.5,
+    }):
+        fig, ax = plt.subplots(figsize=(5.6, 3.5), layout="constrained")
+        ax.axhline(S.LOSS_LIMIT, color=GREY, linewidth=0.9, zorder=1)
+        for name, t, members in S.MARGIN_CONFIGS:
+            a = [h.availability for h in P.holder_set(*members)]
+            r = rows[name]
+            ax.plot(scales, [S.loss_given_custody(name, t, [x * s for x in a], members)
+                             for s in scales], linewidth=1.8, zorder=3,
+                    label=f"{name} (기준 초과 {r['limit_scale']:.2f}배)", **style[name])
+            ax.plot([r["limit_scale"]], [S.LOSS_LIMIT], marker="o", markersize=5.5,
+                    markeredgecolor="white", markeredgewidth=0.8, linestyle="none",
+                    color=style[name]["color"], zorder=4)
+        ax.annotate("수용 기준 0.2", (0.505, S.LOSS_LIMIT), textcoords="offset points",
+                    xytext=(0, -3), ha="left", va="top", fontsize=8.5, color=GREY)
+        ax.set_xlim(0.5, 1.0)
+        ax.set_ylim(0, 1)
+        ax.set_xlabel("모든 $a_i$에 곱한 배율 (1이 현재 값)")
+        ax.set_ylabel("$P(\\mathrm{loss}\\mid c)$")
+        ax.grid(axis="y", zorder=0)
+        ax.set_axisbelow(True)
+        ax.legend(loc="upper right", frameon=False)
+        return _save(fig, outdir, "sgrd-availability")
+
+
 def _save(fig, outdir: Path, stem: str) -> Path:
     outdir.mkdir(parents=True, exist_ok=True)
     pdf = outdir / f"{stem}.pdf"
@@ -254,8 +377,20 @@ def _save(fig, outdir: Path, stem: str) -> Path:
     return pdf
 
 
+def generate_korean(outdir: Path, adversary: str = "A2") -> list[Path]:
+    """The result figures with Korean labels, for the dissertation."""
+    use_paper_style()
+    with mpl.rc_context(KOREAN_RC):
+        return [figure_regimes(outdir, adversary, ko=True),
+                figure_frontier(outdir, adversary, ko=True),
+                figure_compromise(outdir),
+                figure_availability(outdir)]
+
+
 def generate_all(outdir: Path, adversary: str = "A2") -> list[Path]:
     use_paper_style()
     return [figure_regimes(outdir, adversary),
             figure_frontier(outdir, adversary),
-            figure_finding1(outdir, adversary)]
+            figure_finding1(outdir, adversary),
+            figure_compromise(outdir),
+            figure_availability(outdir)]

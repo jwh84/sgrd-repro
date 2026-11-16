@@ -15,14 +15,18 @@ pip install -r requirements.txt
 python run_all.py
 ```
 
-Expected output ends with `132/132 published values reproduced`. Add `--strict`
+Expected output ends with `171/171 published values reproduced`. Add `--strict`
 to make any discrepancy an exit code, `--no-figures` to skip matplotlib.
 
 ## What is here
 
 | Path | Contents |
 |---|---|
-| `sgrd/modelcheck.py` | Transition system, twelve properties, five designs (B0, B1, B2, B3, H1). Exhaustive enumeration of the reachable transition relation. |
+| `sgrd/modelcheck.py` | Transition system, twelve properties, eight designs (B0, B1–B3, K1–K3, H1), with P4–P6 checked at every stage advance, false triggers, and the offline path. Exhaustive enumeration of the reachable transition relation, plus a mutation test showing each property can fail. |
+| `sgrd/smv.py` | The same controller re-encoded for NuSMV, as an independent symbolic cross-check of every verdict. |
+| `models/sgrd_restore.spthy` | Tamarin model of the online restoration exchange (eight lemmas). |
+| `sgrd/montecarlo.py` | Event-level Monte Carlo cross-check of the chain under non-exponential assumptions. |
+| `sgrd/refimpl/conformance.py` | Model–implementation conformance test: random event sequences from the model, replayed on the reference implementation. |
 | `sgrd/ctmc.py` | The absorbing continuous-time Markov chain, solved by fundamental matrix. |
 | `sgrd/threshold.py` | Poisson-binomial dynamic programme over heterogeneous holders; quorum timing. |
 | `sgrd/asam.py` | Possession-duration extraction and the per-observation audit pipeline. |
@@ -44,7 +48,7 @@ to make any discrepancy an exit code, `--no-figures` to skip matplotlib.
 | `tests/test_refimpl.py` | Constants, primitives, and S1–S5/T1–T5 as regression tests. |
 
 ```bash
-python tests/test_sgrd.py     # 34 tests, no pytest needed
+python tests/test_sgrd.py     # 37 tests, no pytest needed
 pytest -q                     # if you have it
 python dump_counterexamples.py --limit 3
 ```
@@ -57,15 +61,15 @@ controller where those values have to be produced by real signatures, a real
 transcript hash, a real monotonic counter, and a real manifest comparison.
 
 ```bash
-python run_refimpl.py --strict     # ~3 minutes, 85 checks
-python tests/test_refimpl.py       # 43 tests, no pytest needed
+python run_refimpl.py --strict     # ~3 minutes, 87 checks
+python tests/test_refimpl.py       # 44 tests, no pytest needed
 ```
 
 **Tier 0 (S1–S6)** needs nothing but an interpreter. Every check asserts the
 *reason* for a refusal, not merely that one occurred. The one experiment that
 measures rather than refuses is the latency budget, and its point is negative:
-the whole cryptographic exchange runs four and a half orders of magnitude below
-the quorum-gathering time that dominates the paper's 23-hour mean restoration,
+the whole cryptographic exchange takes about 1/70,000 of
+the quorum-gathering time that dominates the 28-hour mean restoration of 2-of-4,
 so no plausible change to it moves any quantitative claim.
 
 **Crash consistency (A1–A4)** covers the capsule commit. Power is cut before
@@ -107,13 +111,25 @@ here** — several results are conditional in ways the summary table does not sh
 
 ## Scope of the verification claim
 
-The transition system models the **online** restoration path. The accurate claim
-is that H1 satisfies all twelve properties *in a specification model covering
-that path*. Four threats specific to the offline boarding-team path are not in
-the model: theft or cloning of a pre-authorised offline credential, expiry and
-revocation of the custody attestation, the interval during which a platform with
-no conduit cannot learn of a revocation, and compromise of the custody
-attestation issuer itself.
+The transition system models the online restoration path, false triggers, and
+(since thesis-v1.2) the offline boarding-team path. The accurate claim is that H1
+satisfies all twelve properties *in this specification model* when no offline
+artefact is stolen. The model also reports the residual risk of that path. If
+only one of the offline credential and the custody attestation is stolen, every
+verdict is unchanged; if both are stolen, H1 violates P3 and P12; if one is
+stolen and the transport key sk_tr can be extracted, it violates P7. Still outside the
+model: expiry and revocation of the custody attestation, the interval during
+which a platform with no conduit cannot learn of a revocation, and compromise of
+the custody attestation issuer itself.
+
+Cross-checks added for the thesis revision (thesis-v1.2), each run on its own:
+
+```bash
+python -m sgrd.smv C3 H1 > h1.smv && NuSMV -dcx h1.smv   # NuSMV 2.7.1, symbolic
+tamarin-prover --prove --auto-sources models/sgrd_restore.spthy   # Tamarin 1.12
+python -m sgrd.montecarlo                     # event-level Monte Carlo of the chain
+python -m sgrd.refimpl.conformance 120        # 120 walks x 60 events, model vs implementation
+```
 
 Reachable state and transition counts are encoding-dependent and are reported
 for information. The verdicts are the claim.

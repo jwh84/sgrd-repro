@@ -67,7 +67,7 @@ S1  Threshold assembly at t, refusal below t, attributed bad shares
 
 ----------------------------------------------------------------------------------------
 S2  Combiner ignorance, by ablation against the unblinded construction
-    5/5 checks passed
+    7/7 checks passed
 ----------------------------------------------------------------------------------------
   ok  combiner cannot open the assembly (as specified)
         -> cannot open
@@ -81,6 +81,13 @@ S2  Combiner ignorance, by ablation against the unblinded construction
   ok  K_e does not appear in the combiner's view (ablation: no blinding)
         -> absent
         a byte-level check only; it cannot speak to computational hiding
+  ok  a holder using its own share as well does not open the assembly (as specified)
+        -> 0 of 12
+        one concrete attack, not a proof: every holder, every choice of t-1 other
+        holders' shares
+  ok  the same attack opens it when the other holders do not blind (control)
+        -> 12 of 12
+        without this the check above could pass against an attack that never works
   ok  blinding is load-bearing
         -> yes
         specified construction hides K_e from the combiner; the same code with k_i = 0
@@ -257,24 +264,24 @@ A4  A real process killed while writing real files
 S6  Latency budget of the recovery path
 ----------------------------------------------------------------------------------------
 operation                                        n   mean ms  median ms    p95 ms
-capsule seal (platform, at R3)                  20     33.88      33.68     35.04
-re-encryption share + proof (one holder)        20    136.43     135.44    141.81
-share proof verification (one share)            20    173.87     170.88    185.78
-combine 3 shares (incl. verification)           20    610.48     589.29    671.51
-capsule unwrap (platform)                       20     37.43      37.06     38.89
-token signature (one holder)                    20     30.38      30.31     30.77
-token signature verification (one)              20     55.22      55.19     56.28
-custody attestation issue                       20     30.88      30.66     32.07
+capsule seal (platform, at R3)                  20     34.34      34.34     34.68
+re-encryption share + proof (one holder)        20    137.74     137.74    139.44
+share proof verification (one share)            20    170.11     169.65    173.40
+combine 3 shares (incl. verification)           20    583.13     583.72    586.03
+capsule unwrap (platform)                       20     38.03      37.89     38.49
+token signature (one holder)                    20     31.44      31.27     32.23
+token signature verification (one)              20     56.89      55.77     61.54
+custody attestation issue                       20     31.04      31.01     31.42
 transcript digest                             1000      0.00       0.00      0.00
 manifest comparison (4 entries)               1000      0.00       0.00      0.00
-ephemeral key generation                        20     15.55      15.48     16.02
-full episode: denial through R3                 20   1413.20    1410.74   1431.35
+ephemeral key generation                        20     15.53      15.52     15.64
+full episode: denial through R3                 20   1436.02    1435.24   1444.14
 
-  sum of the parts             1.124 s
-  measured end-to-end          1.413 s
+  sum of the parts             1.098 s
+  measured end-to-end          1.436 s
   quorum response time             4 h   (1/rho, Section sec:results)
   mean restoration time           23 h   = 82,800 s
-  the exchange as a fraction of it         1.71e-05   (4.8 orders of magnitude below)
+  the exchange as a fraction of it         1.73e-05   (4.8 orders of magnitude below)
 
   These are CPython `pow` on a 2048-bit modulus and are therefore a loose upper bound --
   a tuned library would be roughly an order of magnitude faster and hardware more again.
@@ -377,7 +384,7 @@ T4  Values that cannot be wound back (TPM clock and reset count)
     5/5 checks passed
 ----------------------------------------------------------------------------------------
   ok  T4 clock never decreases
-        -> monotonic [132570838 -> 132571077 ms]
+        -> monotonic [144405481 -> 144405717 ms]
         5 readings over 0.25 s
   ok  T4 clock advances with real time
         -> advances
@@ -416,5 +423,5 @@ T5  The tier-0 exchange driven by real hardware inputs
   completeness and power-loss atomicity remain untouched.
 
 ----------------------------------------------------------------------------------------
-TOTAL  85/85 checks passed
+TOTAL  87/87 checks passed
 ----------------------------------------------------------------------------------------

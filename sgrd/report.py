@@ -151,7 +151,7 @@ def check_ctmc(report: Report) -> None:
 
 def check_modelcheck(report: Report) -> None:
     """Verdicts are the load-bearing claim; state counts are encoding-dependent."""
-    for name in ("B0", "B1", "B2", "B3", "H1"):
+    for name in modelcheck.DESIGNS:
         res = modelcheck.verify(name)
         ref = P.PUBLISHED["modelcheck"][name]
         report.add("Table 6", f"{name}: properties satisfied (of 12)",

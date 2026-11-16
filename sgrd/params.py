@@ -179,15 +179,18 @@ def named_configurations() -> list[Configuration]:
 #: Values printed in the paper, used by :mod:`sgrd.report` to check the
 #: reimplementation against the published article rather than against itself.
 PUBLISHED = {
-    # Table tab:ctmc, adversary A2, pooled possession regime.
+    # Table tab:ctmc, adversary A2, pooled possession regime. Revised for the
+    # final defence: after off-board remediation the quorum is gathered again
+    # and the stages walked a second time (review item M3), which lowers every
+    # H1 restoration probability by about 0.008 and adds 5-7 hours.
     # key -> (P_ext, P_rest_given_custody, P_loss_given_custody, E_Tc, P_u)
     "ctmc": {
         ("local secret (no quorum)", "B0"): (0.709, 0.999, 0.001, 1.0, 1.0),
-        ("1-of-1 (ROC only)", "H1"): (None, 0.958, 0.043, 23.7, 5.0e-2),
-        ("2-of-3 (ROC, class, owner)", "H1"): (None, 0.846, 0.154, 24.4, 3.0e-3),
-        ("2-of-4 (+ 24/7 escrow)", "H1"): (None, 0.965, 0.035, 23.0, 4.0e-3),
-        ("3-of-4 (+ 24/7 escrow)", "H1"): (None, 0.836, 0.164, 25.6, 6.0e-5),
-        ("3-of-5 (+ flag)", "H1"): (None, 0.899, 0.101, 24.7, 9.9e-5),
+        ("1-of-1 (ROC only)", "H1"): (None, 0.950, 0.050, 29.4, 5.0e-2),
+        ("2-of-3 (ROC, class, owner)", "H1"): (None, 0.838, 0.162, 30.6, 3.0e-3),
+        ("2-of-4 (+ 24/7 escrow)", "H1"): (None, 0.957, 0.043, 28.3, 4.0e-3),
+        ("3-of-4 (+ 24/7 escrow)", "H1"): (None, 0.827, 0.173, 32.4, 6.0e-5),
+        ("3-of-5 (+ flag)", "H1"): (None, 0.891, 0.109, 31.0, 9.9e-5),
     },
     # Section sec:results, phase one. (variant, adversary) -> P_ext, pooled.
     "extraction_pooled": {
@@ -200,14 +203,14 @@ PUBLISHED = {
     # configuration cost the same, under P_u * C_u + P(loss|c) * C_hull. C_u is
     # the cost of an *unauthorised restoration* -- at least the autonomy stack,
     # and at most what a hostile party can do with a laden ship under power.
-    "cost_ratio_vs_2of4": {"3-of-5 (+ flag)": 16.8, "3-of-4 (+ 24/7 escrow)": 32.9},
+    "cost_ratio_vs_2of4": {"3-of-5 (+ flag)": 17.0, "3-of-4 (+ 24/7 escrow)": 33.1},
     # Finding 3: unconditional permanent-loss probability at 2-of-4, A2, pooled.
     "unconditional_loss_b0": {"B0": 0.000},
     # Finding 2: the t sweep over the full five-holder set.
     "sweep_five_holders": {
         1: {"P_u": 0.115},
-        4: {"P_available": 0.637, "P_loss_given_custody": 0.387},
-        5: {"P_available": 0.204, "P_loss_given_custody": 0.804},
+        4: {"P_available": 0.637, "P_loss_given_custody": 0.393},
+        5: {"P_available": 0.204, "P_loss_given_custody": 0.807},
     },
     # Table tab:asam.
     "asam": {
@@ -220,7 +223,28 @@ PUBLISHED = {
     # Table tab:mc: witness counts and reachable-relation sizes. B1--B3 are the
     # intermediate designs: each holds all of SGRD but one contribution, so the
     # column that fails names what that contribution discharges.
+    # Table tab:mc under modelcheck.SETTINGS (stage-wise P4-P6, false trigger,
+    # offline path without theft). Verdicts are the claim; counts depend on
+    # the encoding. The first version (SETTINGS_V1) is kept under modelcheck_v1.
     "modelcheck": {
+        "B0": {"states": 774, "transitions": 3430, "satisfied": 1,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P1': 104, 'P2': 188, 'P3': 128, 'P4': 148, 'P5': 296, 'P6': 272, 'P7': 76, 'P8': 136, 'P10': 104, 'P11': 1574, 'P12': 416}}},
+        "K1": {"states": 538, "transitions": 2318, "satisfied": 5,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P2': 88, 'P3': 32, 'P4': 72, 'P5': 144, 'P6': 128, 'P8': 64, 'P12': 128}}},
+        "K2": {"states": 1678, "transitions": 7444, "satisfied": 7,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P2': 32, 'P3': 32, 'P4': 440, 'P10': 32, 'P12': 240}}},
+        "K3": {"states": 674, "transitions": 3050, "satisfied": 4,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P2': 192, 'P3': 80, 'P4': 152, 'P5': 304, 'P6': 272, 'P8': 136, 'P10': 160, 'P12': 272}}},
+        "B1": {"states": 1490, "transitions": 7392, "satisfied": 11,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P10': 4}}},
+        "B2": {"states": 534, "transitions": 2448, "satisfied": 9,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P5': 72, 'P6': 64, 'P8': 32}}},
+        "B3": {"states": 922, "transitions": 4498, "satisfied": 11,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{'P4': 280}}},
+        "H1": {"states": 1274, "transitions": 6082, "satisfied": 12,
+               "witnesses": {**{f"P{i}": 0 for i in range(1, 13)}, **{}}},
+    },
+    "modelcheck_v1": {
         "B0": {"states": 722, "transitions": 3116, "satisfied": 1,
                "witnesses": {"P1": 96, "P2": 176, "P3": 128, "P4": 136,
                              "P5": 272, "P6": 272, "P7": 76, "P8": 136,

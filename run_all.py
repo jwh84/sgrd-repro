@@ -85,7 +85,10 @@ def section_asam(csv_path: str | None, outdir: Path) -> dict:
 def section_modelcheck() -> dict:
     _h("Section VII-A / Table 6 -- exhaustive property verification")
     out = {}
-    names = ("B0", "B1", "B2", "B3", "H1")
+    names = modelcheck.DESIGNS
+    cfg = modelcheck.SETTINGS
+    print(f"settings: stage-wise P4-P6={cfg.stagewise}, false trigger={cfg.false_trigger}, "
+          f"offline path={cfg.offline}, theft={cfg.theft}")
     results = {name: modelcheck.verify(name) for name in names}
 
     print(f"{'':<5}" + "".join(f"{n:>7}" for n in names) + "   claim")
@@ -135,6 +138,32 @@ def section_modelcheck() -> dict:
           f"the rest are design\n  requirements for reasons the model does not "
           f"represent.")
     out["ablation"] = {k: list(v) for k, v in abl.items()}
+
+    # Mutation testing (review item M1): every property must be broken by at
+    # least one mutant of H1, or its check is vacuous.
+    print()
+    print("Mutation testing -- H1 with one mechanism removed:")
+    mt = modelcheck.mutation_test()
+    for name, props in mt.items():
+        print(f"  {name:<22}{modelcheck.MUTANTS[name][0]:<52}breaks {', '.join(props) or '(nothing)'}")
+    unkilled = [p for p in modelcheck.PROPERTY_CLAIMS if not any(p in v for v in mt.values())]
+    print(f"  properties no mutant breaks: {unkilled or 'none'}")
+    out["mutation"] = {k: list(v) for k, v in mt.items()}
+
+    # Residual risks of the offline path (review item M8), reported apart from
+    # the main result: theft of one artefact, of both, and sk_tr extraction.
+    print()
+    print("Offline path under theft (properties satisfied of 12):")
+    residual = {}
+    for label, cfg_r in (("one artefact stolen", modelcheck.Settings(theft="one")),
+                         ("both artefacts stolen", modelcheck.Settings(theft="both")),
+                         ("one stolen + sk_tr extractable",
+                          modelcheck.Settings(theft="one", sktr_extractable=True))):
+        row = {n: modelcheck.verify(n, cfg_r) for n in names}
+        print(f"  {label:<32}" + " ".join(f"{n}:{r.n_satisfied:>2}" for n, r in row.items())
+              + "   H1 fails: " + (", ".join(p for p, w in row["H1"].witnesses.items() if w) or "-"))
+        residual[label] = {n: r.n_satisfied for n, r in row.items()}
+    out["offline_residual"] = residual
     return out
 
 

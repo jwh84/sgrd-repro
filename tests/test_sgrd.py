@@ -432,6 +432,51 @@ def test_full_reproduction_report():
     assert not rep.failures, "\n".join(str(c) for c in rep.failures)
 
 
+def test_compromise_margin():
+    """t=2 has little room in c_i; t=3 has several times more."""
+    from sgrd import sensitivity as S
+    rows = {r["configuration"]: r for r in S.compromise_margin()}
+    assert abs(rows["2-of-4"]["limit_scale"] - 1.60) < 0.01
+    assert abs(rows["3-of-5"]["limit_scale"] - 4.82) < 0.01
+    assert rows["3-of-5"]["grid_pass_fraction"] > rows["2-of-4"]["grid_pass_fraction"]
+    # Falling together: at least t compromised iff the t-th most exposed is.
+    assert rows["2-of-4"]["comonotone_p_u"] == 0.03
+    assert rows["3-of-5"]["comonotone_p_u"] == 0.02
+
+
+def test_availability_margin():
+    """The mirror of the compromise margin: t=2 tolerates a falling a_i."""
+    from sgrd import sensitivity as S
+    rows = {r["configuration"]: r for r in S.availability_margin()}
+    # Revised for the remediation-reassembly chain (review item M3): 0.73 -> 0.74,
+    # 0.90 -> 0.91.
+    assert abs(rows["2-of-4"]["limit_scale"] - 0.74) < 0.005
+    assert abs(rows["3-of-5"]["limit_scale"] - 0.91) < 0.005
+    assert rows["2-of-4"]["grid_pass_fraction"] > rows["3-of-5"]["grid_pass_fraction"]
+
+
+def test_closed_form_loss_matches_chain():
+    """The vectorised joint grid must agree with the solved chain."""
+    from dataclasses import replace
+    from sgrd import sensitivity as S
+    from sgrd.threshold import p_authority_assemblable, quorum_rate
+    cases = [(1, .5), (6, 1.0)]
+    for name, t, m in S.MARGIN_CONFIGS:
+        hs = P.holder_set(*m)
+        for rs_h, pm in cases:
+            for wo in (168.0, 720.0, 8760.0):
+                for resp in (1.0, 4.0, 24.0):
+                    want = S.Scenario(holders=hs, write_off_h=wo, p_modified=pm,
+                                      restoration_rate_h1=1.0 / rs_h,
+                                      response_rate=1.0 / resp)
+                    B, _, pa, _ = want.solve(t, "H1")
+                    chain = pa * B[1, 2] + (1 - pa) * B[2, 2]
+                    closed = S.closed_form_loss(
+                        p_authority_assemblable(hs, t), quorum_rate(hs, t, 1.0), resp,
+                        rs_h, 1.0 / want.remediation_rate, wo, pm)
+                    assert abs(chain - closed) < 1e-9
+
+
 if __name__ == "__main__":
     fns = [(n, f) for n, f in sorted(globals().items())
            if n.startswith("test_") and callable(f)]
@@ -449,3 +494,29 @@ if __name__ == "__main__":
             print(f"ok   {name}")
     print(f"\n{len(fns) - failed}/{len(fns)} tests passed")
     sys.exit(1 if failed else 0)
+
+
+def test_extended_model_keeps_every_verdict():
+    """Review item M1/M4/M8: stage-wise P4-P6, false triggers and the offline path
+    without theft change no design's verdict, and every design keeps the count
+    of the first version."""
+    v1 = {n: modelcheck.verify(n, modelcheck.SETTINGS_V1).n_satisfied for n in modelcheck.DESIGNS}
+    main = {n: modelcheck.verify(n).n_satisfied for n in modelcheck.DESIGNS}
+    assert v1 == main == {"B0": 1, "K1": 5, "K2": 7, "K3": 4, "B1": 11, "B2": 9, "B3": 11, "H1": 12}
+
+
+def test_every_property_is_broken_by_some_mutant():
+    """Mutation testing: no property check is vacuous."""
+    mt = modelcheck.mutation_test()
+    for p in modelcheck.PROPERTY_CLAIMS:
+        assert any(p in broke for broke in mt.values()), p
+
+
+def test_offline_residual_risks():
+    """One stolen artefact breaks nothing; both break P3 and P12; sk_tr extraction
+    with a stolen credential breaks P7 (review item M8)."""
+    S = modelcheck.Settings
+    fails = lambda cfg: {p for p, w in modelcheck.verify("H1", cfg).witnesses.items() if w}
+    assert fails(S(theft="one")) == set()
+    assert fails(S(theft="both")) == {"P3", "P12"}
+    assert fails(S(theft="one", sktr_extractable=True)) == {"P7"}

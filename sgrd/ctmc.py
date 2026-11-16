@@ -7,6 +7,8 @@ Time starts at the instant denial fires. Transient states:
     Z_u   custody regained, authority NOT assemblable (fewer than t holders)
     RS    staged restoration in progress
     RM    off-board remediation after a failed R1 attestation
+    ZR2   quorum gathered again after remediation (new token for the new h_att)
+    RS2   second, clean pass through the stages
 
 Absorbing states:
 
@@ -26,7 +28,7 @@ Three structural commitments, all of them load-bearing:
    the R0 gate in Section `sec:staged`, carried over.
 
 3. **The write-off horizon competes only after custody is regained.** Z_r, Z_u,
-   RS and RM each carry an exponential hazard ``1/720 h`` into BRK; Z_p does
+   RS, RM, ZR2 and RS2 each carry an exponential hazard ``1/720 h`` into BRK; Z_p does
    not. A constructive total loss is an accounting event and does not end the
    adversary's physical access, so it cannot truncate an extraction in
    progress.
@@ -60,7 +62,7 @@ from .params import Configuration
 from .threshold import p_authority_assemblable, p_unauthorised_restoration, quorum_rate
 
 # RS (restoring), not RC: RC is the recovery capsule of Section `sec:design`.
-TRANSIENT = ("Z_p", "Z_r", "Z_u", "RS", "RM")
+TRANSIENT = ("Z_p", "Z_r", "Z_u", "RS", "RM", "ZR2", "RS2")
 ABSORBING = ("OK", "EXT", "BRK")
 
 _TI = {s: i for i, s in enumerate(TRANSIENT)}
@@ -164,10 +166,23 @@ def build_generator(
     t_edge("RS", "RM", restoration_rate * p_modified_effective)
     a_edge("RS", "BRK", w)
 
-    # RM: off-board remediation, then straight to capability. The configuration
-    # is clean on return, so there is no second trip through RS.
-    a_edge("RM", "OK", remediation_rate)
+    # RM: off-board remediation. The token signed for this episode digests the
+    # measured state h_att at request time, so once remediation changes the
+    # configuration that token no longer matches at R1 and a fresh one is
+    # needed: the quorum is gathered again (ZR2) before a second, clean pass
+    # through the stages (RS2). The first version of this chain went straight
+    # from RM to OK, which skipped that reassembly and disagreed with the R1
+    # rule of Section `sec:staged` (review item M3).
+    t_edge("RM", "ZR2", remediation_rate)
     a_edge("RM", "BRK", w)
+
+    # ZR2: custody is still back and the same holders are asked again.
+    t_edge("ZR2", "RS2", quorum_gather_rate)
+    a_edge("ZR2", "BRK", w)
+
+    # RS2: the remediated configuration is clean, so no second remediation.
+    a_edge("RS2", "OK", restoration_rate)
+    a_edge("RS2", "BRK", w)
 
     # Diagonal = -(total exit rate).
     exits = T.sum(axis=1) + A.sum(axis=1)

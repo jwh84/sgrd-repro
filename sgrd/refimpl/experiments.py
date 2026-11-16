@@ -271,6 +271,45 @@ def s2_combiner_ignorance(base: pr.Scenario) -> list[Check]:
             kek not in view,
             "a byte-level check only; it cannot speak to computational hiding"))
 
+    # The combiner may itself be a holder, and then it also knows its own `s_i`.
+    # It can therefore strip its own blinding by computing `c1^(s_i)` directly.
+    # Every holder is tried with every choice of `t-1` other holders' shares.
+    def holder_attack_opens(others_blind: bool) -> tuple[int, int]:
+        """(attempts that opened the capsule, attempts made)."""
+        issued = {h.index: tpre.reshare(h.share, cap, pk_eph, blind=others_blind)
+                  for h in q.holders}
+        opened, attempts = 0, 0
+        for h in q.holders:
+            rest = [i for i in issued if i != h.index]
+            for chosen in combinations(rest, q.authority.t - 1):
+                lam = gp.lagrange_coefficients([h.index, *chosen])
+                z = gp.exp(gp.exp(cap.c1, h.share.value), lam[h.index])
+                for j in chosen:
+                    z = gp.mul(z, gp.exp(issued[j].d, lam[j]))
+                attempts += 1
+                try:
+                    tpre.unwrap(tpre.ReEncrypted(z, 1, ()), 0, cap)
+                    opened += 1
+                except (InvalidTag, ValueError):
+                    pass
+        return opened, attempts
+
+    opened, attempts = holder_attack_opens(others_blind=True)
+    out.append(Check(
+        "S2", "a holder using its own share as well does not open the assembly "
+        "(as specified)",
+        f"0 of {attempts}", f"{opened} of {attempts}", opened == 0,
+        "one concrete attack, not a proof: every holder, every choice of t-1 "
+        "other holders' shares"))
+    opened, attempts = holder_attack_opens(others_blind=False)
+    out.append(Check(
+        "S2", "the same attack opens it when the other holders do not blind "
+        "(control)",
+        f"{attempts} of {attempts}", f"{opened} of {attempts}",
+        attempts > 0 and opened == attempts,
+        "without this the check above could pass against an attack that "
+        "never works"))
+
     out.append(Check(
         "S2", "blinding is load-bearing", "yes",
         "yes" if all(c.passed for c in out) else "inconclusive",

@@ -23,13 +23,14 @@ has to move before the paper's stated conclusion flips.
 
 from __future__ import annotations
 
+import itertools
 import math
 from dataclasses import dataclass, replace
 from typing import Callable
 
 from . import ctmc
 from . import params as P
-from .threshold import (p_authority_assemblable, p_unauthorised_restoration,
+from .threshold import (p_at_least, p_authority_assemblable, quorum_rate, p_unauthorised_restoration,
                         quorum_rate)
 
 
@@ -81,7 +82,7 @@ def out_p_loss_given_custody(s: Scenario) -> float:
     """The commercial cost of the recovery design, at the recommended 2-of-4."""
     B, _, p_a, _ = s.solve(2, "H1", n=4)
     import numpy as np
-    pi = np.zeros(5)
+    pi = np.zeros(len(ctmc.TRANSIENT))
     pi[1], pi[2] = p_a, 1.0 - p_a
     return float((pi @ B)[2])
 
@@ -91,7 +92,7 @@ def out_e_tc(s: Scenario) -> float:
     import numpy as np
     B, N, p_a, _ = s.solve(2, "H1", n=4)
     t_ok = ctmc.conditional_mean_time(N, B, "OK")
-    pi = np.zeros(5)
+    pi = np.zeros(len(ctmc.TRANSIENT))
     pi[1], pi[2] = p_a, 1.0 - p_a
     mass = pi * B[:, 0]
     return float(np.nansum(mass * np.nan_to_num(t_ok)) / mass.sum())
@@ -101,7 +102,7 @@ def out_p_rest_given_custody(s: Scenario) -> float:
     """The recovery side of the same design point."""
     import numpy as np
     B, _, p_a, _ = s.solve(2, "H1", n=4)
-    pi = np.zeros(5)
+    pi = np.zeros(len(ctmc.TRANSIENT))
     pi[1], pi[2] = p_a, 1.0 - p_a
     return float((pi @ B)[0])
 
@@ -179,7 +180,7 @@ def _finding1_holds(s: Scenario) -> bool:
 
     def post(n: int, t: int) -> tuple[float, float, float]:
         B, N, p_a, _ = s.solve(t, "H1", n=n)
-        pi = np.zeros(5)
+        pi = np.zeros(len(ctmc.TRANSIENT))
         pi[1], pi[2] = p_a, 1.0 - p_a
         b = pi @ B
         t_ok = ctmc.conditional_mean_time(N, B, "OK")
@@ -198,7 +199,7 @@ def _viable_band(s: Scenario) -> list[int]:
         if p_unauthorised_restoration(s.holders, t) >= 1e-2:
             continue
         B, _, p_a, _ = s.solve(t, "H1")
-        pi = np.zeros(5)
+        pi = np.zeros(len(ctmc.TRANSIENT))
         pi[1], pi[2] = p_a, 1.0 - p_a
         if float((pi @ B)[2]) < 0.2:
             band.append(t)
@@ -240,6 +241,233 @@ def breaking_factors(factors: tuple[float, ...] = (
     return rows
 
 
+#: The named configurations of Table `tab:ctmc` that meet the acceptance test.
+MARGIN_CONFIGS: tuple[tuple[str, int, tuple[str, ...]], ...] = (
+    ("2-of-3", 2, ("Q1", "Q2", "Q3")),
+    ("2-of-4", 2, ("Q1", "Q2", "Q3", "Q4")),
+    ("3-of-4", 3, ("Q1", "Q2", "Q3", "Q4")),
+    ("3-of-5", 3, ("Q1", "Q2", "Q3", "Q4", "Q5")),
+)
+#: P_u half of the acceptance test in Finding 2.
+P_U_LIMIT = 1e-2
+#: Per-holder values for the exhaustive grid: 7^5 = 16,807 combinations.
+C_GRID = (0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2)
+
+
+def scaled_p_u(compromise: list[float], t: int, scale: float) -> float:
+    """P_u with every c_i multiplied by ``scale``, holders independent."""
+    return p_at_least([min(1.0, c * scale) for c in compromise], t)
+
+
+def compromise_margin() -> list[dict[str, object]]:
+    """How wrong can the stipulated c_i be before P_u fails the acceptance test?
+
+    c_i is not an input to the chain, so only P_u moves. ``comonotone`` is the
+    opposite extreme from independence: holders fall together, so at least t are
+    compromised exactly when the t-th most exposed one is.
+    """
+    tags = sorted(h.tag for h in P.HOLDERS)
+    grid = list(itertools.product(C_GRID, repeat=len(tags)))
+    rows: list[dict[str, object]] = []
+    for name, t, members in MARGIN_CONFIGS:
+        c = [h.compromise for h in P.holder_set(*members)]
+        lo, hi = 1e-3, 1e3
+        for _ in range(100):
+            mid = (lo * hi) ** 0.5
+            if scaled_p_u(c, t, mid) < P_U_LIMIT:
+                lo = mid
+            else:
+                hi = mid
+        idx = [tags.index(m) for m in members]
+        passed = sum(p_at_least([v[i] for i in idx], t) < P_U_LIMIT for v in grid)
+        rows.append({
+            "configuration": name,
+            "t": t,
+            "p_u": scaled_p_u(c, t, 1.0),
+            "limit_scale": lo,
+            "grid_pass_fraction": passed / len(grid),
+            "comonotone_p_u": sorted(c, reverse=True)[t - 1],
+        })
+    return rows
+
+
+def grid_ordering(better: str = "3-of-5", worse: str = "2-of-4") -> float:
+    """Fraction of the C_GRID combinations in which ``better`` has the lower P_u."""
+    conf = {name: (t, members) for name, t, members in MARGIN_CONFIGS}
+    tags = sorted(h.tag for h in P.HOLDERS)
+    grid = list(itertools.product(C_GRID, repeat=len(tags)))
+    (t_b, m_b), (t_w, m_w) = conf[better], conf[worse]
+    i_b, i_w = [tags.index(m) for m in m_b], [tags.index(m) for m in m_w]
+    wins = sum(p_at_least([v[i] for i in i_b], t_b)
+               < p_at_least([v[i] for i in i_w], t_w) for v in grid)
+    return wins / len(grid)
+
+
+#: Loss half of the acceptance test in Finding 2.
+LOSS_LIMIT = 0.2
+#: Per-holder values for the exhaustive availability grid.
+A_GRID = (0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)   # steps of 0.1
+
+
+def loss_given_custody(name: str, t: int, availability: list[float],
+                       members: tuple[str, ...]) -> float:
+    """P(loss | c) with the given a_i. c_i does not enter the chain."""
+    holders = tuple(replace(h, availability=min(1.0, a))
+                    for h, a in zip(P.holder_set(*members), availability))
+    return ctmc.evaluate(P.Configuration(name, t, holders, "H1")).p_loss_given_custody
+
+
+def availability_margin() -> list[dict[str, object]]:
+    """How far can the stipulated a_i fall before the loss test fails?
+
+    The counterpart of :func:`compromise_margin`. a_i moves only the chain and c_i
+    moves only P_u, so the two margins are independent and the acceptance region is
+    their product.
+    """
+    rows: list[dict[str, object]] = []
+    for name, t, members in MARGIN_CONFIGS:
+        a = [h.availability for h in P.holder_set(*members)]
+        lo, hi = 0.0, 1.0        # lo fails the test, hi passes
+        for _ in range(60):
+            mid = (lo + hi) / 2
+            if loss_given_custody(name, t, [x * mid for x in a], members) < LOSS_LIMIT:
+                hi = mid
+            else:
+                lo = mid
+        single = {}
+        for j, tag in enumerate(members):
+            l2, h2 = 0.0, a[j]
+            base = loss_given_custody(name, t, [0.0 if k == j else x for k, x in enumerate(a)],
+                                      members) if t <= len(a) - 1 else 1.0
+            if base < LOSS_LIMIT:
+                single[tag] = 0.0   # the test holds even if this holder never answers
+                continue
+            for _ in range(50):
+                mid = (l2 + h2) / 2
+                v = list(a)
+                v[j] = mid
+                if loss_given_custody(name, t, v, members) < LOSS_LIMIT:
+                    h2 = mid
+                else:
+                    l2 = mid
+            single[tag] = h2
+        grid = list(itertools.product(A_GRID, repeat=len(members)))
+        passed = sum(loss_given_custody(name, t, list(v), members) < LOSS_LIMIT for v in grid)
+        rows.append({
+            "configuration": name,
+            "t": t,
+            "p_loss": loss_given_custody(name, t, a, members),
+            "limit_scale": hi,
+            "single_holder_floor": single,
+            "grid_pass_fraction": passed / len(grid),
+            "grid_size": len(grid),
+        })
+    return rows
+
+
+#: Low / base / high for every other stipulated value, as hours or a probability.
+#: The ends bracket what could plausibly happen; they are not estimates.
+JOINT_RANGES: dict[str, tuple[float, float, float]] = {
+    "response_h": (1.0, 1.0 / P.RESPONSE_RATE, 24.0),
+    "restoration_h": (2.0, 1.0 / P.RESTORATION_RATE["H1"], 72.0),
+    "remediation_h": (12.0, 1.0 / P.REMEDIATION_RATE, 336.0),
+    "write_off_h": (168.0, P.WRITE_OFF_HORIZON_H, 8760.0),
+    "p_modified": (0.0, P.P_MODIFIED, 1.0),
+}
+#: The levels actually enumerated. p_m is a probability, so it steps by 0.1 like
+#: a_i; the durations have no natural step and stay at low / base / high.
+JOINT_LEVELS: dict[str, tuple[float, ...]] = {
+    **JOINT_RANGES,
+    "p_modified": tuple(i / 10 for i in range(11)),
+}
+
+
+def closed_form_loss(p_a, gather_at_unit_rate, response_h, restoration_h,
+                     remediation_h, write_off_h, p_modified):
+    """P(loss | c) of the chain, in closed form, so the grid can be vectorised.
+
+    From Z_u the only exit is write-off. From Z_r the episode must beat the
+    write-off hazard at each stage it passes through: gathering, restoring and,
+    with probability p_modified, remediating -- after which the quorum is
+    gathered again for a token over the new measured state and the stages are
+    walked a second time (ZR2, RS2 in :mod:`sgrd.ctmc`).
+    """
+    w = 1.0 / write_off_h
+    gather = gather_at_unit_rate / response_h   # the rate scales with rho
+    mu = 1.0 / restoration_h
+    rem = 1.0 / remediation_h
+    after_remediation = rem / (rem + w) * gather / (gather + w) * mu / (mu + w)
+    ok_from_rs = mu * ((1.0 - p_modified) + p_modified * after_remediation) / (mu + w)
+    return 1.0 - p_a * gather / (gather + w) * ok_from_rs
+
+
+def joint_range() -> dict[str, object]:
+    """Every a_i level with every low/base/high combination of the other values.
+
+    a_i and the five others move only the loss; c_i moves only P_u. The two parts
+    are computed apart and combine as a product, so nothing is sampled.
+    """
+    import numpy as np
+
+    names = list(JOINT_RANGES)
+    combos = list(itertools.product(*(JOINT_LEVELS[k] for k in names)))
+    arr = {k: np.array([c[i] for c in combos]) for i, k in enumerate(names)}
+    base = {k: JOINT_RANGES[k][1] for k in names}
+    margins = {r["configuration"]: r for r in compromise_margin()}
+
+    def grid_values(t: int, members: tuple[str, ...]):
+        p_a, g = [], []
+        for v in itertools.product(A_GRID, repeat=len(members)):
+            hs = [replace(h, availability=a) for h, a in zip(P.holder_set(*members), v)]
+            p = p_authority_assemblable(hs, t)
+            p_a.append(p)
+            g.append(quorum_rate(hs, t, 1.0))
+        return np.array(p_a), np.array(g)
+
+    out: list[dict[str, object]] = []
+    losses: dict[str, np.ndarray] = {}
+    for name, t, members in MARGIN_CONFIGS:
+        hs = P.holder_set(*members)
+        pa0 = p_authority_assemblable(hs, t)
+        g0 = quorum_rate(hs, t, 1.0)
+        at_base_a = closed_form_loss(pa0, g0, **arr)
+        pa, g = grid_values(t, members)
+        # shape: (a combinations, other combinations)
+        full = closed_form_loss(pa[:, None], g[:, None], **arr)
+        losses[name] = full
+        worst = int(np.argmax(at_base_a))
+        single = {}
+        for k in names:
+            lo = closed_form_loss(pa0, g0, **{**base, k: JOINT_RANGES[k][0]})
+            hi = closed_form_loss(pa0, g0, **{**base, k: JOINT_RANGES[k][2]})
+            single[k] = (float(lo), float(hi))
+        a_pass = float((full < LOSS_LIMIT).mean())
+        c_pass = margins[name]["grid_pass_fraction"]
+        out.append({
+            "configuration": name,
+            "t": t,
+            "base_loss": float(closed_form_loss(pa0, g0, **base)),
+            "combinations": int(full.size),
+            "others_pass_at_base_a": float((at_base_a < LOSS_LIMIT).mean()),
+            "worst_others_loss_at_base_a": float(at_base_a[worst]),
+            "worst_others": dict(zip(names, combos[worst])),
+            "loss_range": (float(full.min()), float(full.max())),
+            "all_values_pass": a_pass,
+            "with_c_pass": a_pass * float(c_pass),
+            "single": single,
+        })
+
+    # Finding 1: does adding Q4 to 2-of-3 ever raise the loss? Q4's a is free.
+    three, four = losses["2-of-3"], losses["2-of-4"]
+    n = len(A_GRID)
+    expanded = np.repeat(three, n, axis=0)   # each a over Q1..Q3, for each a_Q4
+    return {
+        "rows": out,
+        "finding1_loss_not_worse": float((four <= expanded + 1e-12).mean()),
+        "others_combinations": len(combos),
+    }
+
+
 def format_report(step: float = 0.10) -> str:
     lines: list[str] = []
     lines.append("Elasticity  E = dln(output)/dln(parameter), "
@@ -271,4 +499,36 @@ def format_report(step: float = 0.10) -> str:
             d = f"{down:g}x" if down else "-"
             u = f"{up:g}x" if up else "-"
             lines.append(f"      breaks {claim:<38} at {d} down / {u} up")
+
+    lines.append("")
+    lines.append(f"Compromise margin: common factor on every c_i before P_u >= "
+                 f"{P_U_LIMIT:g} (grid: {len(C_GRID)}^{len(P.HOLDERS)} per-holder values)")
+    lines.append("")
+    for row in compromise_margin():
+        lines.append(f"  {row['configuration']:<8} P_u={row['p_u']:.2e}  "
+                     f"limit x{row['limit_scale']:.2f}  "
+                     f"grid pass {row['grid_pass_fraction']:.1%}  "
+                     f"comonotone P_u={row['comonotone_p_u']:.2f}")
+    lines.append(f"  3-of-5 below 2-of-4 in {grid_ordering():.1%} of the grid")
+
+    lines.append("")
+    lines.append(f"Availability margin: common factor on every a_i below which "
+                 f"P(loss|c) >= {LOSS_LIMIT:g}")
+    lines.append("")
+    for row in availability_margin():
+        lines.append(f"  {row['configuration']:<8} loss={row['p_loss']:.3f}  "
+                     f"limit x{row['limit_scale']:.2f}  "
+                     f"grid pass {row['grid_pass_fraction']:.1%} of {row['grid_size']}  "
+                     f"floors {row['single_holder_floor']}")
+
+    joint = joint_range()
+    lines.append("")
+    lines.append(f"Joint ranges: every a_i level x {joint['others_combinations']} "
+                 "low/base/high combinations of the other values")
+    lines.append("")
+    for row in joint["rows"]:
+        lines.append(f"  {row['configuration']:<8} base a_i: {row['others_pass_at_base_a']:.1%} pass, "
+                     f"worst loss {row['worst_others_loss_at_base_a']:.3f}; "
+                     f"all values: {row['all_values_pass']:.1%}; with c_i: {row['with_c_pass']:.1%}")
+    lines.append(f"  2-of-4 no worse than 2-of-3 in {joint['finding1_loss_not_worse']:.1%}")
     return "\n".join(lines)

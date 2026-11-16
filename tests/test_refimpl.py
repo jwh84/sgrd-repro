@@ -273,6 +273,18 @@ def test_the_ablation_actually_ablates():
     assert opened and all(c.observed == "OPENS K_e" for c in opened)
 
 
+def test_the_holder_attack_is_a_real_attack():
+    """The own-share attack must open the capsule when the others do not blind,
+    and must be tried for every holder and every choice of t-1 others."""
+    checks = ex.s2_combiner_ignorance(scenario())
+    attack = next(c for c in checks if "own share" in c.name)
+    control = next(c for c in checks if "(control)" in c.name)
+    assert attack.observed.startswith("0 of ")
+    n = int(control.observed.split(" of ")[1])
+    assert n > 0 and control.observed == f"{n} of {n}"
+    assert attack.observed == f"0 of {n}"
+
+
 # --- crash consistency of the capsule commit ---------------------------------
 
 def test_slot_record_round_trip():
@@ -525,3 +537,11 @@ if __name__ == "__main__":
     print(f"\n{len(fns) - failed - skipped}/{len(fns)} tests passed"
           + (f", {skipped} skipped for want of hardware" if skipped else ""))
     sys.exit(1 if failed else 0)
+
+
+def test_refimpl_conforms_to_the_model():
+    """Random event sequences from the formal model, replayed on the reference
+    implementation, give the same controller decisions and states."""
+    from sgrd.refimpl import conformance
+    stats = conformance.run(walks=4, steps=60, seed=7)
+    assert stats["mismatch"] == 0 and stats["proj_mismatch"] == 0

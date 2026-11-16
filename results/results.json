@@ -27,27 +27,84 @@
   },
   "modelcheck": {
     "B0": {
-      "states": 722,
-      "transitions": 3116,
+      "states": 774,
+      "transitions": 3430,
       "satisfied": 1,
       "witnesses": {
-        "P1": 96,
-        "P2": 176,
+        "P1": 104,
+        "P2": 188,
         "P3": 128,
-        "P4": 136,
-        "P5": 272,
+        "P4": 148,
+        "P5": 296,
         "P6": 272,
         "P7": 76,
         "P8": 136,
         "P9": 0,
-        "P10": 96,
-        "P11": 1356,
+        "P10": 104,
+        "P11": 1574,
         "P12": 416
       }
     },
+    "K1": {
+      "states": 538,
+      "transitions": 2318,
+      "satisfied": 5,
+      "witnesses": {
+        "P1": 0,
+        "P2": 88,
+        "P3": 32,
+        "P4": 72,
+        "P5": 144,
+        "P6": 128,
+        "P7": 0,
+        "P8": 64,
+        "P9": 0,
+        "P10": 0,
+        "P11": 0,
+        "P12": 128
+      }
+    },
+    "K2": {
+      "states": 1678,
+      "transitions": 7444,
+      "satisfied": 7,
+      "witnesses": {
+        "P1": 0,
+        "P2": 32,
+        "P3": 32,
+        "P4": 440,
+        "P5": 0,
+        "P6": 0,
+        "P7": 0,
+        "P8": 0,
+        "P9": 0,
+        "P10": 32,
+        "P11": 0,
+        "P12": 240
+      }
+    },
+    "K3": {
+      "states": 674,
+      "transitions": 3050,
+      "satisfied": 4,
+      "witnesses": {
+        "P1": 0,
+        "P2": 192,
+        "P3": 80,
+        "P4": 152,
+        "P5": 304,
+        "P6": 272,
+        "P7": 0,
+        "P8": 136,
+        "P9": 0,
+        "P10": 160,
+        "P11": 0,
+        "P12": 272
+      }
+    },
     "B1": {
-      "states": 514,
-      "transitions": 2280,
+      "states": 1490,
+      "transitions": 7392,
       "satisfied": 11,
       "witnesses": {
         "P1": 0,
@@ -65,18 +122,18 @@
       }
     },
     "B2": {
-      "states": 234,
-      "transitions": 916,
+      "states": 534,
+      "transitions": 2448,
       "satisfied": 9,
       "witnesses": {
         "P1": 0,
         "P2": 0,
         "P3": 0,
         "P4": 0,
-        "P5": 16,
-        "P6": 16,
+        "P5": 72,
+        "P6": 64,
         "P7": 0,
-        "P8": 8,
+        "P8": 32,
         "P9": 0,
         "P10": 0,
         "P11": 0,
@@ -84,14 +141,14 @@
       }
     },
     "B3": {
-      "states": 266,
-      "transitions": 1104,
+      "states": 922,
+      "transitions": 4498,
       "satisfied": 11,
       "witnesses": {
         "P1": 0,
         "P2": 0,
         "P3": 0,
-        "P4": 4,
+        "P4": 280,
         "P5": 0,
         "P6": 0,
         "P7": 0,
@@ -103,8 +160,8 @@
       }
     },
     "H1": {
-      "states": 346,
-      "transitions": 1430,
+      "states": 1274,
+      "transitions": 6082,
       "satisfied": 12,
       "witnesses": {
         "P1": 0,
@@ -149,6 +206,80 @@
       "nav_kernel_outside_denial": [
         "P11"
       ]
+    },
+    "mutation": {
+      "onboard_no_threshold": [
+        "P1",
+        "P10"
+      ],
+      "no_counter": [
+        "P2"
+      ],
+      "no_custody": [
+        "P3",
+        "P12"
+      ],
+      "no_safe": [
+        "P4"
+      ],
+      "single_step": [
+        "P5",
+        "P6",
+        "P8"
+      ],
+      "no_r1_check": [
+        "P8"
+      ],
+      "no_erase": [
+        "P7"
+      ],
+      "residue": [
+        "P7"
+      ],
+      "no_threshold": [
+        "P10"
+      ],
+      "kernel_inside": [
+        "P11"
+      ],
+      "no_cmd_revert": [
+        "P12"
+      ],
+      "no_reissue": [
+        "P9"
+      ]
+    },
+    "offline_residual": {
+      "one artefact stolen": {
+        "B0": 1,
+        "K1": 5,
+        "K2": 7,
+        "K3": 4,
+        "B1": 11,
+        "B2": 9,
+        "B3": 11,
+        "H1": 12
+      },
+      "both artefacts stolen": {
+        "B0": 1,
+        "K1": 5,
+        "K2": 7,
+        "K3": 4,
+        "B1": 9,
+        "B2": 7,
+        "B3": 9,
+        "H1": 10
+      },
+      "one stolen + sk_tr extractable": {
+        "B0": 1,
+        "K1": 5,
+        "K2": 7,
+        "K3": 4,
+        "B1": 10,
+        "B2": 8,
+        "B3": 10,
+        "H1": 11
+      }
     }
   },
   "extraction": {
@@ -180,45 +311,45 @@
     },
     "1-of-1 (ROC only) [H1]": {
       "P(ext)": null,
-      "P(rest|c)": 0.9574958280001944,
-      "P(loss|c)": 0.042504171999805586,
-      "E[T_c] (h)": 23.680436016713273,
+      "P(rest|c)": 0.9497040178507765,
+      "P(loss|c)": 0.05029598214922356,
+      "E[T_c] (h)": 29.44809071414009,
       "P_u": 0.05,
       "P(rest) uncond": null,
       "P(loss) uncond": null
     },
     "2-of-3 (ROC, class, owner) [H1]": {
       "P(ext)": null,
-      "P(rest|c)": 0.8458016735780708,
-      "P(loss|c)": 0.15419832642192935,
-      "E[T_c] (h)": 24.404999843365825,
+      "P(rest|c)": 0.8384189835906155,
+      "P(loss|c)": 0.1615810164093847,
+      "E[T_c] (h)": 30.590942228429597,
       "P_u": 0.00304,
       "P(rest) uncond": null,
       "P(loss) uncond": null
     },
     "2-of-4 (+ 24/7 escrow) [H1]": {
       "P(ext)": null,
-      "P(rest|c)": 0.9645890195318086,
-      "P(loss|c)": 0.03541098046819144,
-      "E[T_c] (h)": 22.96035166091536,
+      "P(rest|c)": 0.9573059715912621,
+      "P(loss|c)": 0.042694028408738344,
+      "E[T_c] (h)": 28.31194329415568,
       "P_u": 0.0039789000000000005,
       "P(rest) uncond": null,
       "P(loss) uncond": null
     },
     "3-of-4 (+ 24/7 escrow) [H1]": {
       "P(ext)": null,
-      "P(rest|c)": 0.8355500221437633,
-      "P(loss|c)": 0.1644499778562366,
-      "E[T_c] (h)": 25.57628822643507,
+      "P(rest|c)": 0.8274586391647027,
+      "P(loss|c)": 0.17254136083529745,
+      "E[T_c] (h)": 32.43763750551751,
       "P_u": 6.0100000000000004e-05,
       "P(rest) uncond": null,
       "P(loss) uncond": null
     },
     "3-of-5 (+ flag) [H1]": {
       "P(ext)": null,
-      "P(rest|c)": 0.8994278518858665,
-      "P(loss|c)": 0.10057214811413354,
-      "E[T_c] (h)": 24.68704605674731,
+      "P(rest|c)": 0.8913701843405363,
+      "P(loss|c)": 0.10862981565946414,
+      "E[T_c] (h)": 31.03571378760757,
       "P_u": 9.9288e-05,
       "P(rest) uncond": null,
       "P(loss) uncond": null
@@ -227,32 +358,32 @@
       "1": {
         "P_available": 0.999988,
         "P_u": 0.114901093,
-        "P_loss_given_custody": 0.028994657568650578,
-        "E_Tc": 20.830545949038743
+        "P_loss_given_custody": 0.03463950554194777,
+        "E_Tc": 24.949438556867445
       },
       "2": {
         "P_available": 0.998154,
         "P_u": 0.004998718,
-        "P_loss_given_custody": 0.03296850292270426,
-        "E_Tc": 22.457090068684206
+        "P_loss_given_custody": 0.03987307831857728,
+        "E_Tc": 27.517684805981443
       },
       "3": {
         "P_available": 0.9312699999999999,
         "P_u": 9.9288e-05,
-        "P_loss_given_custody": 0.10057214811413354,
-        "E_Tc": 24.68704605674731
+        "P_loss_given_custody": 0.10862981565946414,
+        "E_Tc": 31.03571378760757
       },
       "4": {
         "P_available": 0.6368459999999999,
         "P_u": 8.980000000000001e-07,
-        "P_loss_given_custody": 0.3868660272283473,
-        "E_Tc": 26.93865116903504
+        "P_loss_given_custody": 0.3934848116505043,
+        "E_Tc": 34.584382945735605
       },
       "5": {
         "P_available": 0.20374199999999998,
         "P_u": 3.0000000000000004e-09,
-        "P_loss_given_custody": 0.8043346726131024,
-        "E_Tc": 28.72146204372786
+        "P_loss_given_custody": 0.806731380300829,
+        "E_Tc": 37.391685645334434
       }
     },
     "finding3_identity": {
@@ -263,7 +394,7 @@
     }
   },
   "reproduction": {
-    "summary": "132/132 published values reproduced",
+    "summary": "171/171 published values reproduced",
     "checks": [
       {
         "section": "Table 3",
@@ -429,106 +560,106 @@
       {
         "section": "Table 7",
         "quantity": "P(rest|c) 1-of-1 (ROC only) [H1]",
-        "published": 0.958,
-        "computed": 0.9574958280001944,
+        "published": 0.95,
+        "computed": 0.9497040178507765,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "P(loss|c) 1-of-1 (ROC only) [H1]",
-        "published": 0.043,
-        "computed": 0.042504171999805586,
+        "published": 0.05,
+        "computed": 0.05029598214922356,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "E[T_c] 1-of-1 (ROC only) [H1]",
-        "published": 23.7,
-        "computed": 23.680436016713273,
+        "published": 29.4,
+        "computed": 29.44809071414009,
         "tolerance": 0.05
       },
       {
         "section": "Table 7",
         "quantity": "P(rest|c) 2-of-3 (ROC, class, owner) [H1]",
-        "published": 0.846,
-        "computed": 0.8458016735780708,
+        "published": 0.838,
+        "computed": 0.8384189835906155,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "P(loss|c) 2-of-3 (ROC, class, owner) [H1]",
-        "published": 0.154,
-        "computed": 0.15419832642192935,
+        "published": 0.162,
+        "computed": 0.1615810164093847,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "E[T_c] 2-of-3 (ROC, class, owner) [H1]",
-        "published": 24.4,
-        "computed": 24.404999843365825,
+        "published": 30.6,
+        "computed": 30.590942228429597,
         "tolerance": 0.05
       },
       {
         "section": "Table 7",
         "quantity": "P(rest|c) 2-of-4 (+ 24/7 escrow) [H1]",
-        "published": 0.965,
-        "computed": 0.9645890195318086,
+        "published": 0.957,
+        "computed": 0.9573059715912621,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "P(loss|c) 2-of-4 (+ 24/7 escrow) [H1]",
-        "published": 0.035,
-        "computed": 0.03541098046819144,
+        "published": 0.043,
+        "computed": 0.042694028408738344,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "E[T_c] 2-of-4 (+ 24/7 escrow) [H1]",
-        "published": 23.0,
-        "computed": 22.96035166091536,
+        "published": 28.3,
+        "computed": 28.31194329415568,
         "tolerance": 0.05
       },
       {
         "section": "Table 7",
         "quantity": "P(rest|c) 3-of-4 (+ 24/7 escrow) [H1]",
-        "published": 0.836,
-        "computed": 0.8355500221437633,
+        "published": 0.827,
+        "computed": 0.8274586391647027,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "P(loss|c) 3-of-4 (+ 24/7 escrow) [H1]",
-        "published": 0.164,
-        "computed": 0.1644499778562366,
+        "published": 0.173,
+        "computed": 0.17254136083529745,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "E[T_c] 3-of-4 (+ 24/7 escrow) [H1]",
-        "published": 25.6,
-        "computed": 25.57628822643507,
+        "published": 32.4,
+        "computed": 32.43763750551751,
         "tolerance": 0.05
       },
       {
         "section": "Table 7",
         "quantity": "P(rest|c) 3-of-5 (+ flag) [H1]",
-        "published": 0.899,
-        "computed": 0.8994278518858665,
+        "published": 0.891,
+        "computed": 0.8913701843405363,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "P(loss|c) 3-of-5 (+ flag) [H1]",
-        "published": 0.101,
-        "computed": 0.10057214811413354,
+        "published": 0.109,
+        "computed": 0.10862981565946414,
         "tolerance": 0.001
       },
       {
         "section": "Table 7",
         "quantity": "E[T_c] 3-of-5 (+ flag) [H1]",
-        "published": 24.7,
-        "computed": 24.68704605674731,
+        "published": 31.0,
+        "computed": 31.03571378760757,
         "tolerance": 0.05
       },
       {
@@ -541,15 +672,15 @@
       {
         "section": "Finding 2",
         "quantity": "P(loss|c) at t=4 over five holders",
-        "published": 0.387,
-        "computed": 0.3868660272283473,
+        "published": 0.393,
+        "computed": 0.3934848116505043,
         "tolerance": 0.0005
       },
       {
         "section": "Finding 2",
         "quantity": "P(loss|c) at t=5 over five holders",
-        "published": 0.804,
-        "computed": 0.8043346726131024,
+        "published": 0.807,
+        "computed": 0.806731380300829,
         "tolerance": 0.0005
       },
       {
@@ -639,6 +770,279 @@
       {
         "section": "Table 6",
         "quantity": "B0: P12 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: properties satisfied (of 12)",
+        "published": 5,
+        "computed": 5,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P2 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P3 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P4 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P5 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P6 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P8 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P10 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K1: P12 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: properties satisfied (of 12)",
+        "published": 7,
+        "computed": 7,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P2 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P3 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P4 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P5 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P6 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P8 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P10 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K2: P12 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: properties satisfied (of 12)",
+        "published": 4,
+        "computed": 4,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P1 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P2 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P3 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P4 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P5 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P6 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P7 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P8 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P9 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P10 violated?",
+        "published": 1,
+        "computed": 1,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P11 violated?",
+        "published": 0,
+        "computed": 0,
+        "tolerance": 0
+      },
+      {
+        "section": "Table 6",
+        "quantity": "K3: P12 violated?",
         "published": 1,
         "computed": 1,
         "tolerance": 0
@@ -1150,15 +1554,15 @@
       {
         "section": "Finding 2",
         "quantity": "C_u/C_hull indifference, 2-of-4 vs 3-of-5 (+ flag)",
-        "published": 16.8,
-        "computed": 16.7957949521607,
+        "published": 17.0,
+        "computed": 16.995459146617183,
         "tolerance": 0.05
       },
       {
         "section": "Finding 2",
         "quantity": "C_u/C_hull indifference, 2-of-4 vs 3-of-4 (+ 24/7 escrow)",
-        "published": 32.9,
-        "computed": 32.928191637247416,
+        "published": 33.1,
+        "computed": 33.13446269943837,
         "tolerance": 0.05
       },
       {
